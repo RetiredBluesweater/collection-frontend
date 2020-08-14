@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@overrided-vkui": ["src/components/overridedVkUi"],
+      "@overrided-vkui/*": ["src/components/overridedVkUi/*"]
+    }
+  }
+}
