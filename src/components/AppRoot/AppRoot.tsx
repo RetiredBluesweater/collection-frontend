@@ -22,7 +22,7 @@ import { ServicePanel } from '../tools/ServicePanel';
 import { Config } from '../../config';
 import { getStorageKeys, getLaunchParams } from '../../utils';
 import { AppRootState } from './types';
-import { StorageFieldEnum, StorageValuesMap, OS, Insets } from '../../types';
+import { StorageFieldEnum, StorageValuesMap, OS, Insets, RegisterMutation, registerMutation } from '../../types';
 
 import { appConfigActions } from '../../redux/reducers/appConfig';
 import { deviceActions } from '../../redux/reducers/device';
@@ -196,9 +196,10 @@ export class AppRoot extends PureComponent<Props, AppRootState> {
 
     try {
       // Performing all async operations and getting data to launch application
-      const [storage, vkUser] = await Promise.all([
+      const [storage, vkUser, register] = await Promise.all([
         getStorageKeys<StorageValuesMap>(...Object.values(StorageFieldEnum)),
         vkBridge.send('VKWebAppGetUserInfo'),
+        this.apolloClient.mutate<RegisterMutation, RegisterMutation.Arguments>({ mutation: registerMutation }),
       ]);
 
       // Create history depending on initial data
