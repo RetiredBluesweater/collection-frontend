@@ -42,7 +42,7 @@
     "react-router5": "^8.0.1",
     "react-scripts": "^3.4.1",
     "react-scroll": "^1.7.16",
-    "react-transition-group": "^4.3.0",
+    "react-transition-group": "^4.4.1",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "router5": "^8.0.1",

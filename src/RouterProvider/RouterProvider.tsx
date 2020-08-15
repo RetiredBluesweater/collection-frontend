@@ -8,7 +8,7 @@ export const RouterProvider: React.FC = ({ children }) => {
   // роут по умолчанию зависит от того, где было открыто приложение
 
   const defaultRoute = useMemo(() => {
-    return RootRoute.FOLDERS;
+    return RootRoute.MAIN;
   }, []);
 
   const invite = window.location.hash.substring(1).includes('invite');

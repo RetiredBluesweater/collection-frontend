@@ -12,8 +12,8 @@ export const brightLightTheme: Theme = {
     },
     statusBar: {
       default: {
-        color: '#3F8AE0',
-        style: 'light',
+        color: '#FFFFFF',
+        style: 'dark',
       },
     },
     header: {
