@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FixedLayout } from '@vkontakte/vkui';
-import { ReactComponent as PlusBtnSVG } from '../../../assets/plus_btn.svg';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
+import { ReactComponent as PlusBtnSVG } from '../../../assets/plus_btn.svg';
 import Overlay from '../Overlay';
+import OutsideClickHandler from 'react-outside-click-handler';
+import AddBtnToolBar from '../AddBtnToolBar';
 
 const styles = makeStyles({
   fixedLayout: {
@@ -15,6 +17,7 @@ const styles = makeStyles({
     },
   },
   btn: {
+    position: 'relative',
     filter: 'drop-shadow(0px 0px 12px rgba(7, 30, 66, 0.3)) drop-shadow(0px 7px 10px rgba(23, 82, 149, 0.25))',
     '& .lines': {
       transition: 'all 0.4s',
@@ -29,7 +32,11 @@ const styles = makeStyles({
   },
 });
 
-const AddBtn = () => {
+const AddBtn: React.FC<{
+  openAddFolderModalHandler: () => void;
+  openAddArticleModalHandler: () => void;
+  modalOpened: boolean;
+}> = ({ openAddFolderModalHandler, openAddArticleModalHandler, modalOpened }) => {
   const classes = styles();
   const [openMode, setOpenMode] = useState(false);
 
@@ -37,11 +44,24 @@ const AddBtn = () => {
     setOpenMode(!openMode);
   };
 
+  useEffect(() => {
+    if (modalOpened) {
+      setOpenMode(false);
+    }
+  }, [modalOpened]);
+
   return (
     <>
       <Overlay enable={openMode} />
       <FixedLayout className={classes.fixedLayout} vertical="bottom">
-        <PlusBtnSVG onClick={onBtnClickHandler} className={clsx(classes.btn, openMode && classes.btn__openMode)} />
+        <OutsideClickHandler onOutsideClick={() => setOpenMode(false)}>
+          <PlusBtnSVG onClick={onBtnClickHandler} className={clsx(classes.btn, openMode && classes.btn__openMode)} />
+          <AddBtnToolBar
+            openAddArticleModalHandler={openAddArticleModalHandler}
+            openAddFolderModalHandler={openAddFolderModalHandler}
+            enable={openMode}
+          />
+        </OutsideClickHandler>
       </FixedLayout>
     </>
   );
