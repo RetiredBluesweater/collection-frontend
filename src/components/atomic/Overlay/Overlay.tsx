@@ -28,6 +28,7 @@ const styles = makeStyles(
     },
     disable: {
       display: 'block',
+      visibility: 'hidden',
       animation: '$fadeOut 0.4s',
     },
     '@keyframes fadeIn': {

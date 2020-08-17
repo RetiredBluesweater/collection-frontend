@@ -21,5 +21,8 @@ export const spaceGrayTheme: Theme = {
       background: 'var(--header_background)',
       color: 'var(--header_text)',
     },
+    itemShadow: {
+      bookmarkArticle: '0px 1px 10px rgba(255, 255, 255, 0.03), 0px 6px 16px 2px rgba(255, 255, 255, 0.04)',
+    },
   },
 };

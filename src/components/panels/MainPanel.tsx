@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { PanelHeader, Input, Button, Div } from '@vkontakte/vkui';
+import { PanelHeader, Input, Button, Div, FixedLayout, Search } from '@vkontakte/vkui';
 import AddBtn from '../atomic/AddBtn';
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
 import { Modal } from '@overrided-vkui';
 import AddArticleModal from '../atomic/modals/AddArticleModal';
+import BookmarksContainer from '../atomic/BookmarksContainer';
+import BookmarksHeader from '../atomic/BookmarksHeader/BookmarksHeader';
 
 const MainPanel = () => {
   const [addFolderModalOpened, openAddFolderModal, closeAddFolderModal] = useQueryFlag(
@@ -43,6 +45,8 @@ const MainPanel = () => {
   return (
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
+      <BookmarksHeader />
+      <BookmarksContainer />
       <AddBtn
         modalOpened={addFolderModalOpened || addArticleModalOpened}
         openAddFolderModalHandler={() => {

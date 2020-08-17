@@ -27,6 +27,9 @@ export interface Palette {
   statusBar: {
     default: StatusBarStyle;
   };
+  itemShadow: {
+    bookmarkArticle: string;
+  };
 }
 
 export type StatusBarMode = keyof Palette['statusBar'] | 'custom';

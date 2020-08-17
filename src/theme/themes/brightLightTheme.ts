@@ -20,5 +20,8 @@ export const brightLightTheme: Theme = {
       background: '#3F8AE0',
       color: 'white',
     },
+    itemShadow: {
+      bookmarkArticle: '0px 1px 10px rgba(0, 0, 0, 0.03), 0px 6px 16px 2px rgba(0, 0, 0, 0.04)',
+    },
   },
 };
