@@ -3,20 +3,15 @@ import loggerPlugin from 'router5-plugin-logger';
 import browserPlugin from 'router5-plugin-browser';
 
 export enum RootRoute {
-  FOLDERS = 'folders',
-  ARTICLES = 'articles',
+  MAIN = 'main',
 }
 
 export const createRouter = (defaultRoute: string, invite: boolean) => {
   const router = createRouter5(
     [
       {
-        name: RootRoute.FOLDERS,
+        name: RootRoute.MAIN,
         path: '/',
-      },
-      {
-        name: RootRoute.ARTICLES,
-        path: '/articles',
       },
     ],
     { defaultRoute, queryParamsMode: 'loose' },

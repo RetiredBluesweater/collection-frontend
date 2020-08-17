@@ -52,7 +52,9 @@ const Provider: React.FC = memo(({ children }) => {
         setActiveModal(modalId);
       },
       hideModal(modalId) {
-        setActiveModal((prev) => (prev === modalId ? null : prev));
+        setActiveModal((prev) => {
+          return prev === modalId ? null : prev;
+        });
       },
       showPopout(popoutId, component) {
         setPopoutStack((prev) => {

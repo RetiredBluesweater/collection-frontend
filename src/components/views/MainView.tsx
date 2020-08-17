@@ -4,32 +4,32 @@ import { Panel } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import { useSelector } from 'src/hooks';
 import { Insets } from '@vkontakte/vk-bridge';
-import FoldersPanel from '../panels/FoldersPanel';
+import MainPanel from '../panels/MainPanel';
 
 const styles = makeStyles(
   {
     root: {
       '& .Panel__in': {
         paddingBottom: (props: { insets: Insets }) => {
-          return `${props.insets.bottom + 52}px !important`;
+          return `${props.insets.bottom}px !important`;
         },
       },
     },
   },
-  { classNamePrefix: 'folders' },
+  { classNamePrefix: 'main' },
 );
-const FoldersView: React.FC<Omit<ViewProps, 'activePanel'>> = (viewProps) => {
+const MainView: React.FC<Omit<ViewProps, 'activePanel'>> = (viewProps) => {
   const insets = useSelector((state) => state.device.currentInsets);
 
   const classes = styles({ insets });
 
   return (
-    <View {...viewProps} activePanel="folders.panel">
-      <Panel className={classes.root} id="folders.panel">
-        <FoldersPanel />
+    <View {...viewProps} activePanel="main.panel">
+      <Panel className={classes.root} id="main.panel">
+        <MainPanel />
       </Panel>
     </View>
   );
 };
 
-export default React.memo(FoldersView);
+export default React.memo(MainView);

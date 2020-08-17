@@ -21,7 +21,7 @@ const Modal: React.FC<ModalProps> = memo(({ show, id, ...modalPageProps }) => {
     } else {
       hideModal(id);
     }
-  }, [id, show, showModal, hideModal]);
+  }, [id, show, showModal, hideModal, modalPageProps]);
 
   useEffect(() => () => hideModal(id), [id, hideModal]);
 
