@@ -4,9 +4,11 @@ import { makeStyles } from '@material-ui/styles';
 import { useSelector } from 'src/hooks';
 import { Insets } from '@vkontakte/vk-bridge';
 import BookmarkArticle from '../BookmarkArticle';
+import FoldersContainer from '../FoldersContainer';
+import Overlay from '../Overlay';
 
-const TOP_SAFE_AREA = 50;
-const BOTTOM_SAFE_AREA = 50;
+const TOP_SAFE_AREA = 88;
+const BOTTOM_SAFE_AREA = 105;
 
 const styles = makeStyles(
   {
@@ -23,11 +25,17 @@ const styles = makeStyles(
 const BookmarksContainer = () => {
   const insets = useSelector((state) => state.device.currentInsets);
   const classes = styles({ insets });
+  const isOverlay = useSelector((state) => state.app.overlay);
   return (
-    <Div className={classes.root}>
-      <BookmarkArticle />
-      <BookmarkArticle />
-    </Div>
+    <>
+      <Overlay enable={isOverlay} blur={true} />
+
+      <Div className={classes.root}>
+        <BookmarkArticle />
+        <BookmarkArticle />
+        <FoldersContainer />
+      </Div>
+    </>
   );
 };
 

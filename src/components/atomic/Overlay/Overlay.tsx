@@ -17,8 +17,9 @@ const styles = makeStyles(
       bottom: 0,
       left: 0,
       right: 0,
-      zIndex: 10,
+      zIndex: (props: { blur: boolean }) => (props.blur ? 12 : 10),
       background: 'rgba(0,0,0,0.4)',
+      backdropFilter: (props: { blur: boolean }) => (props.blur ? 'blur(24px)' : 'unset'),
       opacity: 0,
       display: 'none',
     },
@@ -57,13 +58,12 @@ const styles = makeStyles(
   },
   { classNamePrefix: 'overlay' },
 );
-const Overlay: React.FC<{ enable: boolean }> = ({ enable }) => {
-  const classes = styles();
+const Overlay: React.FC<{ enable: boolean; blur?: boolean }> = ({ enable, blur = false }) => {
+  const classes = styles({ blur });
 
   const isSetViewSettingsSupported = useRef(vkBridge.supports('VKWebAppSetViewSettings')).current;
 
   const theme = useTheme<Theme>();
-
   const { mode, customStyle } = useSelector((state) => ({
     mode: state.device.currentStatusBarMode,
     customStyle: state.device.customStatusBarStyle,
@@ -103,6 +103,15 @@ const Overlay: React.FC<{ enable: boolean }> = ({ enable }) => {
     vkBridge.subscribe(listener);
     return () => vkBridge.unsubscribe(listener);
   }, [setStatusBarStyle, currentStyle, enable]);
+
+  const removeClick = () => {
+    /*  return false; */
+  };
+  useEffect(() => {
+    window.addEventListener('click', removeClick);
+
+    return () => window.removeEventListener('click', removeClick);
+  }, []);
 
   return <div className={clsx(classes.root, enable && classes.enable, !enable && prevStatus && classes.disable)}></div>;
 };

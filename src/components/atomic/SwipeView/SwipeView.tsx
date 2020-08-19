@@ -11,7 +11,11 @@ interface SwipeViewProps {
 
 const styles = makeStyles(
   {
-    root: {},
+    root: {
+      '&:active': {
+        opacity: 0.7,
+      },
+    },
     cellContainer: {},
   },
   { classNamePrefix: 'swipeView' },

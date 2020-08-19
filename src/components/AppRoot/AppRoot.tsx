@@ -134,6 +134,7 @@ export class AppRoot extends PureComponent<Props, AppRootState> {
   public render() {
     const { loading, error, storage } = this.state;
     const { store } = this;
+
     if (loading || !storage || error) {
       return (
         <StoreProvider store={store}>

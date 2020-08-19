@@ -6,7 +6,7 @@ import { RootRoute } from 'src/router';
 import { Modal } from '@overrided-vkui';
 import AddArticleModal from '../atomic/modals/AddArticleModal';
 import BookmarksContainer from '../atomic/BookmarksContainer';
-import BookmarksHeader from '../atomic/BookmarksHeader/BookmarksHeader';
+import BookmarksHeader, { SORT_TYPE } from '../atomic/BookmarksHeader/BookmarksHeader';
 
 const MainPanel = () => {
   const [addFolderModalOpened, openAddFolderModal, closeAddFolderModal] = useQueryFlag(

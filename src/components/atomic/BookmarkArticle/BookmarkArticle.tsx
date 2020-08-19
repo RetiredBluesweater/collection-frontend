@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useState, useEffect } from 'react';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import SwipeView from '../SwipeView';
 import { Theme } from 'src/theme';
@@ -7,6 +7,11 @@ import { ReactComponent as DeleteSVG } from '../../../assets/delete.svg';
 import { ReactComponent as ArticleSVG } from '../../../assets/article.svg';
 import { OS, usePlatform } from '@vkontakte/vkui';
 import { useLongPress } from 'src/hooks/useLongPress';
+import { useActions } from 'src/hooks';
+import { appActions } from 'src/redux/reducers/app';
+import clsx from 'clsx';
+import BookmarkToolbar from '../BookmarkToolbar';
+import OutsideClickHandler from 'react-outside-click-handler';
 
 const styles = makeStyles(
   (theme: Theme) => ({
@@ -23,9 +28,6 @@ const styles = makeStyles(
       height: 55,
       marginTop: 15,
       transition: 'transform .6s var(--ios-easing)',
-      '&:active': {
-        opacity: 0.7,
-      },
     },
     title: {
       color: '#000000',
@@ -43,13 +45,14 @@ const styles = makeStyles(
       fontSize: 11,
       color: '#99A2AD',
     },
-    swipeViewCcon: {
+    swipeViewIcon: {
       '&:active': {
         opacity: 0.7,
       },
     },
     articleSvg: {
       marginRight: 10,
+      minWidth: 17,
     },
   }),
   { classNamePrefix: 'BookmarkArticle' },
@@ -58,16 +61,37 @@ const BookmarkArticle = () => {
   const [contWidth, setContWidth] = useState(0);
   const classes = styles({ contWidth });
   const os = usePlatform();
+  const setOverylayAction = useActions(appActions.setOverlay);
+
+  const [isToolbar, setIsToolbar] = useState(false);
 
   useLayoutEffect(() => {
     const PADDING = os === OS.ANDROID ? 16 : 12;
     //падинг и ширина иконки
-    const INNER_PADDING = 30;
-    setContWidth(window.innerWidth - (PADDING + INNER_PADDING * 2));
+    const INNER_PADDING = 50;
+    setContWidth(window.innerWidth - (INNER_PADDING + PADDING * 2));
   }, []);
 
   const onLongPress = () => {
     console.log('longpress is triggered');
+    const activeNode = document.getElementsByClassName('longtap--active')[0] as HTMLElement;
+    if (activeNode) {
+      activeNode.style.position = 'relative';
+      activeNode.style.zIndex = '100';
+      setIsToolbar(true);
+      setOverylayAction(true);
+    }
+  };
+
+  const onOutsideClick = () => {
+    const activeNode = document.getElementsByClassName('longtap--active')[0] as HTMLElement;
+    if (activeNode) {
+      activeNode.style.position = 'unset';
+      activeNode.style.zIndex = 'unset';
+      activeNode.classList.remove('longtap--active');
+      setIsToolbar(false);
+      setOverylayAction(false);
+    }
   };
 
   const onClick = () => {
@@ -78,16 +102,26 @@ const BookmarkArticle = () => {
     delay: 500,
   };
   const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
+
+  const events = () => {
+    const value = isToolbar ? {} : longPressEvent;
+    return value;
+  };
   return (
     <SwipeView
       leftContent={
         <>
-          <EditSVG className={classes.swipeViewCcon} style={{ marginRight: 5 }} />
-          <DeleteSVG className={classes.swipeViewCcon} />
+          <EditSVG className={classes.swipeViewIcon} style={{ marginRight: 5 }} />
+          <DeleteSVG className={classes.swipeViewIcon} />
         </>
       }
     >
-      <div {...longPressEvent} className={classes.root}>
+      <div {...events()} className={clsx(classes.root, 'longtap-target')}>
+        {isToolbar && (
+          <OutsideClickHandler onOutsideClick={onOutsideClick}>
+            <BookmarkToolbar />
+          </OutsideClickHandler>
+        )}
         <ArticleSVG className={classes.articleSvg} />
         <div>
           <h3 className={classes.title}>Тестовый текст достаточно большой чтобы не влезть ахахах хахах </h3>
