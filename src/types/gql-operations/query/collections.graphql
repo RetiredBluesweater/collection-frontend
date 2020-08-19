@@ -1,0 +1,18 @@
+query collections {
+  collections {
+    id
+    title
+    description
+    ownerId
+    bookmarks {
+      id
+      link
+      title
+      description
+      ownerId
+      collectionId
+      createdAt
+    }
+    createdAt
+  }
+}

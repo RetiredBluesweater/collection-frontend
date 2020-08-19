@@ -1,0 +1,27 @@
+query collectionsWithUncollectedBookmarks {
+  collections {
+    id
+    title
+    description
+    ownerId
+    bookmarks {
+      id
+      link
+      title
+      description
+      ownerId
+      collectionId
+      createdAt
+    }
+    createdAt
+  }
+  uncollectedBookmarks {
+    id
+    link
+    title
+    description
+    ownerId
+    collectionId
+    createdAt
+  }
+}

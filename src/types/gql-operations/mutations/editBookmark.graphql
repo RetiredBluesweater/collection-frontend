@@ -1,0 +1,11 @@
+mutation editBookmark($params: EditBookmarkParamsInput!) {
+  editBookmark(params: $params) {
+    id
+    link
+    title
+    description
+    ownerId
+    collectionId
+    createdAt
+  }
+}
