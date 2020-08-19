@@ -1,0 +1,3 @@
+mutation changeBookmarksCollection($params: ChangeBookmarksCollectionParamsInput!) {
+  changeBookmarksCollection(params: $params)
+}

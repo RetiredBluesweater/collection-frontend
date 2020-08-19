@@ -1,0 +1,3 @@
+mutation deleteCollection($params: DeleteCollectionParamsInput!) {
+  deleteCollection(params: $params)
+}

@@ -1,0 +1,11 @@
+query bookmarks {
+  bookmarks {
+    id
+    link
+    title
+    description
+    ownerId
+    collectionId
+    createdAt
+  }
+}

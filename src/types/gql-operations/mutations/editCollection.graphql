@@ -1,0 +1,18 @@
+mutation editCollection($params: EditCollectionParamsInput!) {
+  editCollection(params: $params) {
+    id
+    title
+    description
+    ownerId
+    bookmarks {
+      id
+      link
+      title
+      description
+      ownerId
+      collectionId
+      createdAt
+    }
+    createdAt
+  }
+}

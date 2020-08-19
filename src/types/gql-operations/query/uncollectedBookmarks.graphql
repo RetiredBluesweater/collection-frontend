@@ -1,0 +1,11 @@
+query uncollectedBookmarks {
+  uncollectedBookmarks {
+    id
+    link
+    title
+    description
+    ownerId
+    collectionId
+    createdAt
+  }
+}
