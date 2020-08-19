@@ -57,8 +57,14 @@ const AddBtn: React.FC<{
         <OutsideClickHandler onOutsideClick={() => setOpenMode(false)}>
           <PlusBtnSVG onClick={onBtnClickHandler} className={clsx(classes.btn, openMode && classes.btn__openMode)} />
           <AddBtnToolBar
-            openAddArticleModalHandler={openAddArticleModalHandler}
-            openAddFolderModalHandler={openAddFolderModalHandler}
+            openAddArticleModalHandler={() => {
+              setOpenMode(false);
+              openAddArticleModalHandler();
+            }}
+            openAddFolderModalHandler={() => {
+              setOpenMode(false);
+              openAddFolderModalHandler();
+            }}
             enable={openMode}
           />
         </OutsideClickHandler>

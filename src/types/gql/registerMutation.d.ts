@@ -1,8 +1,9 @@
 import { DocumentNode } from 'graphql';
+import { User } from './schema';
 export declare namespace RegisterMutation {
     interface Arguments {
     }
-    type register = number;
+    type register = User;
 }
 export interface RegisterMutation {
     register: RegisterMutation.register;

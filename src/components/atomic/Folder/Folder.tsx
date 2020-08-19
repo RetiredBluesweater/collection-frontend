@@ -4,9 +4,12 @@ import { Theme } from 'src/theme';
 import { ReactComponent as FolderSVG } from '../../../assets/folder.svg';
 import Icon16Chevron from '@vkontakte/icons/dist/16/chevron';
 import { usePlatform, OS } from '@vkontakte/vkui';
-import { ReactComponent as EditSVG } from '../../../assets/edit.svg';
+import { ReactComponent as EditSVG } from '../../../assets/edit_big.svg';
 import { ReactComponent as DeleteSVG } from '../../../assets/delete.svg';
 import SwipeView from '../SwipeView';
+import { Collection } from 'src/types';
+import { useSelector, useActions } from 'src/hooks';
+import { collectionsActions } from 'src/redux/reducers/collections';
 
 const styles = makeStyles(
   (theme: Theme) => ({
@@ -20,10 +23,8 @@ const styles = makeStyles(
       padding: '10px',
       borderRadius: 5,
       marginTop: 15,
-
       minHeight: 55,
       height: 55,
-
       transition: 'transform .6s var(--ios-easing)',
       '&:active': {
         opacity: 0.7,
@@ -53,6 +54,7 @@ const styles = makeStyles(
       color: 'var(--content_placeholder_icon)',
     },
     swipeViewIcon: {
+      boxShadow: '0px 1px 10px rgba(0, 0, 0, 0.03), 0px 6px 16px 2px rgba(0, 0, 0, 0.04)',
       '&:active': {
         opacity: 0.7,
       },
@@ -60,10 +62,11 @@ const styles = makeStyles(
   }),
   { classNamePrefix: 'folder' },
 );
-const Folder = () => {
+const Folder: React.FC<Partial<Collection>> = ({ bookmarks, createdAt, description, id, ownerId, title }) => {
   const [contWidth, setContWidth] = useState(0);
   const classes = styles({ contWidth });
   const os = usePlatform();
+  const deleteCollectionAction = useActions(collectionsActions.deleteCollection);
 
   useLayoutEffect(() => {
     const PADDING = os === OS.ANDROID ? 16 : 12;
@@ -72,21 +75,24 @@ const Folder = () => {
     setContWidth(window.innerWidth - (INNER_PADDING + PADDING * 2));
   }, []);
 
+  const onDelete = () => {
+    deleteCollectionAction({ id });
+  };
   return (
     <SwipeView
       leftContent={
         <>
           <EditSVG className={classes.swipeViewIcon} style={{ marginRight: 5 }} />
-          <DeleteSVG className={classes.swipeViewIcon} />
+          <DeleteSVG onClick={onDelete} className={classes.swipeViewIcon} />
         </>
       }
     >
       <div className={classes.root}>
         <FolderSVG style={{ marginRight: 10, minWidth: 20 }} />
         <div className={classes.contentContainer}>
-          <div className={classes.folderTitle}>Тестовый текст достаточно большой чтобы не влезть</div>
+          <div className={classes.folderTitle}>{title}</div>
           <div className={classes.contentRightContainer}>
-            <span style={{ marginRight: 5 }}>47</span>
+            <span style={{ marginRight: 5 }}>{bookmarks?.length}</span>
             <Icon16Chevron />
           </div>
         </div>

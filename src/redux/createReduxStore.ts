@@ -9,6 +9,7 @@ import { launchParamsReducer } from './reducers/launch-params';
 import { vkUserReducer } from './reducers/vkUser';
 import { configReducer } from './reducers/config';
 import { appReducer } from './reducers/app';
+import { collectionsReducer } from './reducers/collections';
 
 const reducers = combineReducers<ReduxState>({
   appConfig: appConfigReducer,
@@ -18,6 +19,7 @@ const reducers = combineReducers<ReduxState>({
   vkUser: vkUserReducer,
   config: configReducer,
   app: appReducer,
+  collections: collectionsReducer,
 });
 
 export function createReduxStore(state?: Partial<ReduxState>): Store<ReduxState> {

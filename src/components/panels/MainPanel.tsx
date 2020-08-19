@@ -6,7 +6,9 @@ import { RootRoute } from 'src/router';
 import { Modal } from '@overrided-vkui';
 import AddArticleModal from '../atomic/modals/AddArticleModal';
 import BookmarksContainer from '../atomic/BookmarksContainer';
-import BookmarksHeader, { SORT_TYPE } from '../atomic/BookmarksHeader/BookmarksHeader';
+import BookmarksHeader from '../atomic/BookmarksHeader/BookmarksHeader';
+import { collectionsActions } from 'src/redux/reducers/collections';
+import { useActions, useSelector } from 'src/hooks';
 
 const MainPanel = () => {
   const [addFolderModalOpened, openAddFolderModal, closeAddFolderModal] = useQueryFlag(
@@ -17,12 +19,23 @@ const MainPanel = () => {
     RootRoute.MAIN,
     'addArticleModal',
   );
+  const createCollectioAction = useActions(collectionsActions.createCollectiion);
+  const collections = useSelector((state) => state.collections.collections);
+  const uncollected = useSelector((state) => state.collections.uncollected);
 
   const [folderName, setFolderName] = useState('');
 
   const addFolderSubmitHandler = () => {
     const folderNameLength = folderName.trim().length;
     if (folderNameLength >= 1 && folderNameLength <= 50) {
+      createCollectioAction({
+        ownerId: 1,
+        id: 1,
+        description: 'SDSS',
+        createdAt: new Date(),
+        bookmarks: [],
+        title: folderName,
+      });
       closeAddFolderModal();
     }
   };
@@ -46,7 +59,7 @@ const MainPanel = () => {
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
       <BookmarksHeader />
-      <BookmarksContainer />
+      <BookmarksContainer collections={collections} uncollected={uncollected} />
       <AddBtn
         modalOpened={addFolderModalOpened || addArticleModalOpened}
         openAddFolderModalHandler={() => {
@@ -56,7 +69,7 @@ const MainPanel = () => {
         openAddArticleModalHandler={openAddArticleModal}
       />
       {addFolderModal}
-      <AddArticleModal opened={addArticleModalOpened} onClose={closeAddArticleModal} />
+      <AddArticleModal collections={collections} opened={addArticleModalOpened} onClose={closeAddArticleModal} />
     </>
   );
 };

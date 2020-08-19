@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import Icon28WriteSquareOutline from '@vkontakte/icons/dist/28/write_square_outline';
+import { ReactComponent as EditSVG } from '../../../assets/edit.svg';
+import { ReactComponent as FolderArrowSVG } from '../../../assets/folder_arrow.svg';
+import { ReactComponent as DeleteSVG } from '../../../assets/deleteSVG.svg';
+import { ReactComponent as SelectSVG } from '../../../assets/select.svg';
+import { ReactComponent as ShareSVG } from '../../../assets/share.svg';
+
+import { useSelector } from 'src/hooks';
 
 const styles = makeStyles(
   {
     root: {
       position: 'absolute',
-      top: 'calc(100% + 20px)',
+      top: (props: { isOutOfWindow: boolean }) => (props.isOutOfWindow ? 'unset' : 'calc(100% + 20px)'),
+      bottom: (props: { isOutOfWindow: boolean }) => (props.isOutOfWindow ? 'calc(100% + 20px)' : 'unset'),
       left: 0,
       width: 250,
       background: 'rgba(249, 249, 249)',
@@ -28,25 +35,59 @@ const styles = makeStyles(
         borderRadius: 10,
         background: '#dcdcdc',
       },
+      '& svg': {
+        width: 22,
+      },
     },
   },
   { classNamePrefix: 'bookmark-toolbar' },
 );
 
-const onItemClick = (e: React.TouchEvent<HTMLDivElement>) => {
-  console.log('hey');
-};
-const BookmarkToolbar = () => {
-  const classes = styles();
+interface BookmarkToolbarProps {
+  onDelete?: () => void;
+}
+const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete }) => {
+  const ref = useRef<any>(null);
+  const [isOutOfWindow, setIsOutOfWindow] = useState(false);
+
+  const classes = styles({ isOutOfWindow });
+
+  useLayoutEffect(() => {
+    const rect = ref.current.getBoundingClientRect();
+
+    const isOut = rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+    if (!isOut) {
+      setIsOutOfWindow(true);
+    }
+  }, []);
+
+  const onItemClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    console.log('hey');
+  };
+
   return (
-    <div className={classes.root}>
-      <div onTouchStart={(e) => onItemClick(e)} className={classes.item}>
+    <div ref={ref} className={classes.root}>
+      <div onClick={(e) => onItemClick(e)} className={classes.item}>
         <div>Редактировать</div>
-        <Icon28WriteSquareOutline />
+        <EditSVG />
       </div>
       <div className={classes.item}>
-        <div>Еще что-то</div>
-        <Icon28WriteSquareOutline />
+        <div>Переместить</div>
+        <FolderArrowSVG style={{ height: 22 }} />
+      </div>
+      <div className={classes.item}>
+        <div>Выбрать</div>
+        <SelectSVG />
+      </div>
+      <div className={classes.item}>
+        <div>Поделиться</div>
+        <ShareSVG />
+      </div>
+      <div className={classes.item}>
+        <div onClick={onDelete} style={{ color: '#E64646' }}>
+          Удалить
+        </div>
+        <DeleteSVG />
       </div>
     </div>
   );

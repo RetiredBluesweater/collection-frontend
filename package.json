@@ -8,6 +8,7 @@
   "dependencies": {
     "@apollo/react-hooks": "^3.1.4",
     "@material-ui/styles": "^4.9.0",
+    "@types/body-scroll-lock": "^2.6.1",
     "@types/classnames": "^2.2.9",
     "@types/graphql": "^14.5.0",
     "@types/history": "^4.7.5",
@@ -19,7 +20,7 @@
     "@types/react-scroll": "^1.5.4",
     "@types/react-transition-group": "^4.2.4",
     "@types/throttle-debounce": "^2.1.0",
-    "@vkontakte/icons": "^1.16.3",
+    "@vkontakte/icons": "^1.33.0",
     "@vkontakte/vk-bridge": "^2.2.2",
     "@vkontakte/vkui": "^3.11.7",
     "apollo-cache-inmemory": "^1.6.5",

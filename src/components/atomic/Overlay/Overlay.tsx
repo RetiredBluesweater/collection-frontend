@@ -6,6 +6,7 @@ import { Theme, StatusBarStyle } from 'src/theme';
 import { useSelector } from 'src/hooks';
 import vkBridge, { VKBridgeSubscribeHandler } from '@vkontakte/vk-bridge';
 import { blacked } from 'src/utils/color';
+import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock';
 
 const OVERLAY_BACK_OPACITY = 0.4;
 
@@ -112,6 +113,16 @@ const Overlay: React.FC<{ enable: boolean; blur?: boolean }> = ({ enable, blur =
 
     return () => window.removeEventListener('click', removeClick);
   }, []);
+
+  useEffect(() => {
+    if (enable) {
+      disableBodyScroll(document.querySelector('#root')!);
+    } else {
+      enableBodyScroll(document.querySelector('#root')!);
+    }
+
+    return () => clearAllBodyScrollLocks();
+  }, [enable]);
 
   return <div className={clsx(classes.root, enable && classes.enable, !enable && prevStatus && classes.disable)}></div>;
 };

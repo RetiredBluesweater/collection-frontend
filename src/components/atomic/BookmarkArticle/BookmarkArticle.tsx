@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import SwipeView from '../SwipeView';
 import { Theme } from 'src/theme';
-import { ReactComponent as EditSVG } from '../../../assets/edit.svg';
+import { ReactComponent as EditSVG } from '../../../assets/edit_big.svg';
 import { ReactComponent as DeleteSVG } from '../../../assets/delete.svg';
 import { ReactComponent as ArticleSVG } from '../../../assets/article.svg';
 import { OS, usePlatform } from '@vkontakte/vkui';
@@ -12,6 +12,7 @@ import { appActions } from 'src/redux/reducers/app';
 import clsx from 'clsx';
 import BookmarkToolbar from '../BookmarkToolbar';
 import OutsideClickHandler from 'react-outside-click-handler';
+import { Bookmark } from 'src/types';
 
 const styles = makeStyles(
   (theme: Theme) => ({
@@ -28,6 +29,11 @@ const styles = makeStyles(
       height: 55,
       marginTop: 15,
       transition: 'transform .6s var(--ios-easing)',
+    },
+    active: {
+      '&:active': {
+        opacity: 0.7,
+      },
     },
     title: {
       color: '#000000',
@@ -46,6 +52,7 @@ const styles = makeStyles(
       color: '#99A2AD',
     },
     swipeViewIcon: {
+      boxShadow: '0px 1px 10px rgba(0, 0, 0, 0.03), 0px 6px 16px 2px rgba(0, 0, 0, 0.04)',
       '&:active': {
         opacity: 0.7,
       },
@@ -57,13 +64,14 @@ const styles = makeStyles(
   }),
   { classNamePrefix: 'BookmarkArticle' },
 );
-const BookmarkArticle = () => {
+const BookmarkArticle: React.FC<Partial<Bookmark>> = ({ title, id, link, createdAt }) => {
   const [contWidth, setContWidth] = useState(0);
-  const classes = styles({ contWidth });
   const os = usePlatform();
   const setOverylayAction = useActions(appActions.setOverlay);
 
   const [isToolbar, setIsToolbar] = useState(false);
+
+  const classes = styles({ contWidth });
 
   useLayoutEffect(() => {
     const PADDING = os === OS.ANDROID ? 16 : 12;
@@ -116,7 +124,10 @@ const BookmarkArticle = () => {
         </>
       }
     >
-      <div {...events()} className={clsx(classes.root, 'longtap-target')}>
+      <div
+        {...events()}
+        className={clsx(classes.root, 'longtap-target', !isToolbar && classes.active, isToolbar && 'longtap--active')}
+      >
         {isToolbar && (
           <OutsideClickHandler onOutsideClick={onOutsideClick}>
             <BookmarkToolbar />
@@ -124,8 +135,8 @@ const BookmarkArticle = () => {
         )}
         <ArticleSVG className={classes.articleSvg} />
         <div>
-          <h3 className={classes.title}>Тестовый текст достаточно большой чтобы не влезть ахахах хахах </h3>
-          <span className={classes.subTitle}>22.05.2020</span>
+          <h3 className={classes.title}>{title}</h3>
+          <span className={classes.subTitle}>{'12.05.1996'}</span>
         </div>
       </div>
     </SwipeView>

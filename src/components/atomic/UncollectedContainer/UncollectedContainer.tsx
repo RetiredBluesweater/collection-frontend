@@ -1,9 +1,13 @@
 import React from 'react';
-import Folder from '../Folder';
+import { Bookmark } from 'src/types';
 import { makeStyles } from '@material-ui/styles';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { Collection } from 'src/types';
+import BookmarkArticle from '../BookmarkArticle';
 
+interface UncollectedContainerProps {
+  header?: string;
+  uncollected: Bookmark[];
+}
 const styles = makeStyles({
   root: {
     marginTop: (props: { isHeader: boolean }) => (props.isHeader ? 52 : 0),
@@ -33,23 +37,18 @@ const useTransitionStyles = makeStyles({
   },
 });
 
-interface FoldersContainerProps {
-  header?: string;
-  collections: Collection[];
-}
-const FoldersContainer: React.FC<FoldersContainerProps> = ({ collections, ...props }) => {
+const UncollectedContainer: React.FC<UncollectedContainerProps> = ({ uncollected, ...props }) => {
   const isHeader = !!props.header;
   const classes = styles({ isHeader });
   const animationStyles = useTransitionStyles();
-  console.log(collections);
 
   return (
     <div className={classes.root}>
       <TransitionGroup>
-        {collections.map((collection, idx) => {
+        {uncollected.map((item, idx) => {
           return (
             <CSSTransition key={idx} timeout={500} classNames={animationStyles}>
-              <Folder bookmarks={collection.bookmarks} title={collection.title} id={collection.id} />
+              <BookmarkArticle id={item.id} title={item.title} createdAt={item.createdAt} />
             </CSSTransition>
           );
         })}
@@ -58,4 +57,4 @@ const FoldersContainer: React.FC<FoldersContainerProps> = ({ collections, ...pro
   );
 };
 
-export default React.memo(FoldersContainer);
+export default React.memo(UncollectedContainer);
