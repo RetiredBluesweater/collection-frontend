@@ -12,6 +12,9 @@ export const collectionsActions = unionize(
     createCollectiion: ofType<Collection>(),
     deleteCollection: ofType<{ id: string }>(),
     createBookmark: ofType<Bookmark>(),
+    deleteBookmark: ofType<{ id: string; collectionId: string | null }>(),
+    editCollection: ofType<Partial<Collection>>(),
+    editBookmark: ofType<Partial<Bookmark>>(),
   },
   unionizeConfig,
 );
@@ -48,6 +51,51 @@ export function collectionsReducer(state: CollectionsReducerState = initialState
         return {
           ...state,
           uncollected: [...state.uncollected, bookmark],
+        };
+      }
+    },
+    deleteBookmark: ({ id, collectionId }) => {
+      if (collectionId) {
+        return {
+          ...state,
+          collections: state.collections.map((collection) =>
+            collectionId === collection.id
+              ? { ...collection, bookmarks: collection.bookmarks.filter((bookmark) => bookmark.id !== id) }
+              : collection,
+          ),
+        };
+      } else {
+        return {
+          ...state,
+          uncollected: state.uncollected.filter((item) => item.id !== id),
+        };
+      }
+    },
+    editCollection: ({ id, ...rest }) => ({
+      ...state,
+      collections: state.collections.map((collection) =>
+        collection.id === id ? { ...collection, ...rest } : collection,
+      ),
+    }),
+    editBookmark: ({ id, collectionId, ...rest }) => {
+      if (collectionId) {
+        return {
+          ...state,
+          collections: state.collections.map((collection) =>
+            collectionId === collection.id
+              ? {
+                  ...collection,
+                  bookmarks: collection.bookmarks.map((bookmark) =>
+                    bookmark.id === id ? { ...bookmark, ...rest } : bookmark,
+                  ),
+                }
+              : collection,
+          ),
+        };
+      } else {
+        return {
+          ...state,
+          uncollected: state.uncollected.map((item) => (item.id !== id ? { ...item, ...rest } : item)),
         };
       }
     },

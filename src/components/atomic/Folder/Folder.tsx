@@ -8,8 +8,15 @@ import { ReactComponent as EditSVG } from '../../../assets/edit_big.svg';
 import { ReactComponent as DeleteSVG } from '../../../assets/delete.svg';
 import SwipeView from '../SwipeView';
 import { Collection } from 'src/types';
-import { useSelector, useActions } from 'src/hooks';
+import { useActions } from 'src/hooks';
 import { collectionsActions } from 'src/redux/reducers/collections';
+import { useRouter } from 'react-router5';
+import { appActions } from 'src/redux/reducers/app';
+import { useLongPress } from 'src/hooks/useLongPress';
+import OutsideClickHandler from 'react-outside-click-handler';
+import BookmarkToolbar from '../BookmarkToolbar';
+import clsx from 'clsx';
+import { RootRoute } from 'src/router';
 
 const styles = makeStyles(
   (theme: Theme) => ({
@@ -26,11 +33,14 @@ const styles = makeStyles(
       minHeight: 55,
       height: 55,
       transition: 'transform .6s var(--ios-easing)',
-      '&:active': {
-        opacity: 0.7,
-      },
+
       '&:not(:first-child)': {
         marginTop: 15,
+      },
+    },
+    active: {
+      '&:active': {
+        opacity: 0.7,
       },
     },
     folderTitle: {
@@ -62,8 +72,17 @@ const styles = makeStyles(
   }),
   { classNamePrefix: 'folder' },
 );
-const Folder: React.FC<Partial<Collection>> = ({ bookmarks, createdAt, description, id, ownerId, title }) => {
+interface FolderProps extends Partial<Collection> {
+  onClick: any;
+  onEdit(): void;
+}
+const Folder: React.FC<FolderProps> = ({ onClick, onEdit, ...props }) => {
+  const { bookmarks, id, title } = props;
   const [contWidth, setContWidth] = useState(0);
+  const setOverylayAction = useActions(appActions.setOverlay);
+
+  const [isToolbar, setIsToolbar] = useState(false);
+
   const classes = styles({ contWidth });
   const os = usePlatform();
   const deleteCollectionAction = useActions(collectionsActions.deleteCollection);
@@ -75,6 +94,42 @@ const Folder: React.FC<Partial<Collection>> = ({ bookmarks, createdAt, descripti
     setContWidth(window.innerWidth - (INNER_PADDING + PADDING * 2));
   }, []);
 
+  const onLongPress = () => {
+    console.log('longpress is triggered');
+    const activeNode = document.getElementsByClassName('longtap--active')[0] as HTMLElement;
+    if (activeNode) {
+      activeNode.style.position = 'relative';
+      activeNode.style.zIndex = '100';
+      setIsToolbar(true);
+      setOverylayAction(true);
+    }
+  };
+
+  const onLongtapViewClose = () => {
+    const activeNode = document.getElementsByClassName('longtap--active')[0] as HTMLElement;
+    if (activeNode) {
+      activeNode.style.position = 'unset';
+      activeNode.style.zIndex = 'unset';
+      activeNode.classList.remove('longtap--active');
+      setIsToolbar(false);
+      setOverylayAction(false);
+    }
+  };
+
+  /*   const onClick = () => {
+    console.log('click is triggered');
+  }; */
+
+  const defaultOptions = {
+    delay: 500,
+  };
+  const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
+
+  const events = () => {
+    const value = isToolbar ? {} : longPressEvent;
+    return value;
+  };
+
   const onDelete = () => {
     deleteCollectionAction({ id });
   };
@@ -82,12 +137,25 @@ const Folder: React.FC<Partial<Collection>> = ({ bookmarks, createdAt, descripti
     <SwipeView
       leftContent={
         <>
-          <EditSVG className={classes.swipeViewIcon} style={{ marginRight: 5 }} />
+          <EditSVG onClick={onEdit} className={classes.swipeViewIcon} style={{ marginRight: 5 }} />
           <DeleteSVG onClick={onDelete} className={classes.swipeViewIcon} />
         </>
       }
     >
-      <div className={classes.root}>
+      <div
+        {...events()}
+        className={clsx(classes.root, 'longtap-target', !isToolbar && classes.active, isToolbar && 'longtap--active')}
+      >
+        {isToolbar && (
+          <OutsideClickHandler onOutsideClick={onLongtapViewClose}>
+            <BookmarkToolbar
+              onEdit={() => {
+                onLongtapViewClose();
+                onEdit();
+              }}
+            />
+          </OutsideClickHandler>
+        )}
         <FolderSVG style={{ marginRight: 10, minWidth: 20 }} />
         <div className={classes.contentContainer}>
           <div className={classes.folderTitle}>{title}</div>

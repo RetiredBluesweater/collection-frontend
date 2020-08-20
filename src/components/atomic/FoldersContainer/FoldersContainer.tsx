@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import Folder from '../Folder';
 import { makeStyles } from '@material-ui/styles';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { Collection } from 'src/types';
+import { Collection, Bookmark } from 'src/types';
+import { useRouter } from 'react-router5';
+import { RootRoute } from 'src/router';
 
 const styles = makeStyles({
   root: {
@@ -36,12 +38,22 @@ const useTransitionStyles = makeStyles({
 interface FoldersContainerProps {
   header?: string;
   collections: Collection[];
+  onOpenEditCollectionModal(collection: Collection): void;
 }
-const FoldersContainer: React.FC<FoldersContainerProps> = ({ collections, ...props }) => {
+const FoldersContainer: React.FC<FoldersContainerProps> = ({ collections, onOpenEditCollectionModal, ...props }) => {
   const isHeader = !!props.header;
   const classes = styles({ isHeader });
   const animationStyles = useTransitionStyles();
   console.log(collections);
+
+  const router = useRouter();
+
+  const openFolder = useCallback(
+    (collectionId: string) => {
+      router.navigate(RootRoute.FOLDER, { id: collectionId });
+    },
+    [router],
+  );
 
   return (
     <div className={classes.root}>
@@ -49,7 +61,13 @@ const FoldersContainer: React.FC<FoldersContainerProps> = ({ collections, ...pro
         {collections.map((collection, idx) => {
           return (
             <CSSTransition key={idx} timeout={500} classNames={animationStyles}>
-              <Folder bookmarks={collection.bookmarks} title={collection.title} id={collection.id} />
+              <Folder
+                onEdit={() => onOpenEditCollectionModal(collection)}
+                onClick={() => openFolder(collection.id)}
+                bookmarks={collection.bookmarks}
+                title={collection.title}
+                id={collection.id}
+              />
             </CSSTransition>
           );
         })}

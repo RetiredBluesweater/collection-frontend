@@ -4,6 +4,7 @@ import browserPlugin from 'router5-plugin-browser';
 
 export enum RootRoute {
   MAIN = 'main',
+  FOLDER = 'folder',
 }
 
 export const createRouter = (defaultRoute: string, invite: boolean) => {
@@ -12,6 +13,10 @@ export const createRouter = (defaultRoute: string, invite: boolean) => {
       {
         name: RootRoute.MAIN,
         path: '/',
+      },
+      {
+        name: RootRoute.FOLDER,
+        path: '/folder/:id',
       },
     ],
     { defaultRoute, queryParamsMode: 'loose' },

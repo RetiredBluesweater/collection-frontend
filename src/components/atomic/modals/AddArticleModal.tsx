@@ -10,11 +10,13 @@ import {
   Group,
   List,
   Cell,
+  Div,
 } from '@vkontakte/vkui';
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
 import { Collection } from 'src/types';
 import Icon24CheckCircleOn from '@vkontakte/icons/dist/24/check_circle_on';
+import { ReactComponent as FolderAddSVG } from '../../../assets/folder_add.svg';
 import { useActions } from 'src/hooks';
 import { collectionsActions } from 'src/redux/reducers/collections';
 import { ValidatedArticleModalFieldsProps } from 'src/components/panels/types/types';

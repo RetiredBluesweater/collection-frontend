@@ -45,8 +45,9 @@ const styles = makeStyles(
 
 interface BookmarkToolbarProps {
   onDelete?: () => void;
+  onEdit?(): void;
 }
-const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete }) => {
+const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete, onEdit }) => {
   const ref = useRef<any>(null);
   const [isOutOfWindow, setIsOutOfWindow] = useState(false);
 
@@ -67,7 +68,7 @@ const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete }) => {
 
   return (
     <div ref={ref} className={classes.root}>
-      <div onClick={(e) => onItemClick(e)} className={classes.item}>
+      <div onClick={onEdit} className={classes.item}>
         <div>Редактировать</div>
         <EditSVG />
       </div>

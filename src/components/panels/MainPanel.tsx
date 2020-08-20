@@ -59,7 +59,7 @@ const MainPanel = () => {
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
       <BookmarksHeader />
-      <BookmarksContainer collections={collections} uncollected={uncollected} />
+      <BookmarksContainer rootRoute={RootRoute.MAIN} collections={collections} uncollected={uncollected} />
       <AddBtn
         modalOpened={addFolderModalOpened || addArticleModalOpened}
         openAddFolderModalHandler={() => {

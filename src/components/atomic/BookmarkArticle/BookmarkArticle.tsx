@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import BookmarkToolbar from '../BookmarkToolbar';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { Bookmark } from 'src/types';
+import { collectionsActions } from 'src/redux/reducers/collections';
 
 const styles = makeStyles(
   (theme: Theme) => ({
@@ -64,10 +65,11 @@ const styles = makeStyles(
   }),
   { classNamePrefix: 'BookmarkArticle' },
 );
-const BookmarkArticle: React.FC<Partial<Bookmark>> = ({ title, id, link, createdAt }) => {
+const BookmarkArticle: React.FC<Partial<Bookmark>> = ({ title, id, link, createdAt, collectionId }) => {
   const [contWidth, setContWidth] = useState(0);
   const os = usePlatform();
   const setOverylayAction = useActions(appActions.setOverlay);
+  const deleteBookmarkAction = useActions(collectionsActions.deleteBookmark);
 
   const [isToolbar, setIsToolbar] = useState(false);
 
@@ -115,12 +117,17 @@ const BookmarkArticle: React.FC<Partial<Bookmark>> = ({ title, id, link, created
     const value = isToolbar ? {} : longPressEvent;
     return value;
   };
+
+  const onDeleteHandler = () => {
+    deleteBookmarkAction({ id, collectionId });
+  };
+
   return (
     <SwipeView
       leftContent={
         <>
           <EditSVG className={classes.swipeViewIcon} style={{ marginRight: 5 }} />
-          <DeleteSVG className={classes.swipeViewIcon} />
+          <DeleteSVG onClick={onDeleteHandler} className={classes.swipeViewIcon} />
         </>
       }
     >

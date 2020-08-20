@@ -61,7 +61,6 @@ const styles = makeStyles(
 );
 const Overlay: React.FC<{ enable: boolean; blur?: boolean }> = ({ enable, blur = false }) => {
   const classes = styles({ blur });
-
   const isSetViewSettingsSupported = useRef(vkBridge.supports('VKWebAppSetViewSettings')).current;
 
   const theme = useTheme<Theme>();

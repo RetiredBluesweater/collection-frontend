@@ -41,6 +41,7 @@ const UncollectedContainer: React.FC<UncollectedContainerProps> = ({ uncollected
   const isHeader = !!props.header;
   const classes = styles({ isHeader });
   const animationStyles = useTransitionStyles();
+  console.log(uncollected);
 
   return (
     <div className={classes.root}>
@@ -48,7 +49,12 @@ const UncollectedContainer: React.FC<UncollectedContainerProps> = ({ uncollected
         {uncollected.map((item, idx) => {
           return (
             <CSSTransition key={idx} timeout={500} classNames={animationStyles}>
-              <BookmarkArticle id={item.id} title={item.title} createdAt={item.createdAt} />
+              <BookmarkArticle
+                id={item.id}
+                title={item.title}
+                createdAt={item.createdAt}
+                collectionId={item.collectionId}
+              />
             </CSSTransition>
           );
         })}

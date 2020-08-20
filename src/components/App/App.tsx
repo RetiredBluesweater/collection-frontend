@@ -10,6 +10,7 @@ import { RootRoute } from '../../router';
 import FoldersView from '../views/MainView';
 import ArticlesView from '../views/ArticlesView';
 import MainView from '../views/MainView';
+import FolderView from '../views/FolderView';
 
 const styles = makeStyles(() => ({
   root: {
@@ -44,6 +45,7 @@ const App = () => {
     <>
       <Root activeView={activeView}>
         <MainView id={RootRoute.MAIN} />
+        <FolderView id={RootRoute.FOLDER} route={route} />
       </Root>
     </>
   );
