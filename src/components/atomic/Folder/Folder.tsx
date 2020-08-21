@@ -9,8 +9,6 @@ import { ReactComponent as DeleteSVG } from '../../../assets/delete.svg';
 import SwipeView from '../SwipeView';
 import { Collection } from 'src/types';
 import { useActions } from 'src/hooks';
-import { collectionsActions } from 'src/redux/reducers/collections';
-import { useRouter } from 'react-router5';
 import { appActions } from 'src/redux/reducers/app';
 import { useLongPress } from 'src/hooks/useLongPress';
 import OutsideClickHandler from 'react-outside-click-handler';
@@ -75,9 +73,13 @@ const styles = makeStyles(
 interface FolderProps extends Partial<Collection> {
   onClick: any;
   onEdit(): void;
+  onDelete(id: string): void;
+  rootRoute: RootRoute;
 }
-const Folder: React.FC<FolderProps> = ({ onClick, onEdit, ...props }) => {
+const Folder: React.FC<FolderProps> = ({ onClick, onEdit, onDelete, rootRoute, ...props }) => {
   const { bookmarks, id, title } = props;
+  console.log(id, title);
+
   const [contWidth, setContWidth] = useState(0);
   const setOverylayAction = useActions(appActions.setOverlay);
 
@@ -85,7 +87,6 @@ const Folder: React.FC<FolderProps> = ({ onClick, onEdit, ...props }) => {
 
   const classes = styles({ contWidth });
   const os = usePlatform();
-  const deleteCollectionAction = useActions(collectionsActions.deleteCollection);
 
   useLayoutEffect(() => {
     const PADDING = os === OS.ANDROID ? 16 : 12;
@@ -95,7 +96,6 @@ const Folder: React.FC<FolderProps> = ({ onClick, onEdit, ...props }) => {
   }, []);
 
   const onLongPress = () => {
-    console.log('longpress is triggered');
     const activeNode = document.getElementsByClassName('longtap--active')[0] as HTMLElement;
     if (activeNode) {
       activeNode.style.position = 'relative';
@@ -130,42 +130,47 @@ const Folder: React.FC<FolderProps> = ({ onClick, onEdit, ...props }) => {
     return value;
   };
 
-  const onDelete = () => {
-    deleteCollectionAction({ id });
+  const onOpenedDeleteAlert = () => {
+    onLongtapViewClose();
+    onDelete(id);
   };
   return (
-    <SwipeView
-      leftContent={
-        <>
-          <EditSVG onClick={onEdit} className={classes.swipeViewIcon} style={{ marginRight: 5 }} />
-          <DeleteSVG onClick={onDelete} className={classes.swipeViewIcon} />
-        </>
-      }
-    >
-      <div
-        {...events()}
-        className={clsx(classes.root, 'longtap-target', !isToolbar && classes.active, isToolbar && 'longtap--active')}
+    <>
+      <SwipeView
+        swipable={!isToolbar}
+        leftContent={
+          <>
+            <EditSVG onClick={onEdit} className={classes.swipeViewIcon} style={{ marginRight: 5 }} />
+            <DeleteSVG onClick={onOpenedDeleteAlert} className={classes.swipeViewIcon} />
+          </>
+        }
       >
-        {isToolbar && (
-          <OutsideClickHandler onOutsideClick={onLongtapViewClose}>
-            <BookmarkToolbar
-              onEdit={() => {
-                onLongtapViewClose();
-                onEdit();
-              }}
-            />
-          </OutsideClickHandler>
-        )}
-        <FolderSVG style={{ marginRight: 10, minWidth: 20 }} />
-        <div className={classes.contentContainer}>
-          <div className={classes.folderTitle}>{title}</div>
-          <div className={classes.contentRightContainer}>
-            <span style={{ marginRight: 5 }}>{bookmarks?.length}</span>
-            <Icon16Chevron />
+        <div
+          {...events()}
+          className={clsx(classes.root, 'longtap-target', !isToolbar && classes.active, isToolbar && 'longtap--active')}
+        >
+          {isToolbar && (
+            <OutsideClickHandler onOutsideClick={onLongtapViewClose}>
+              <BookmarkToolbar
+                onEdit={() => {
+                  onLongtapViewClose();
+                  onEdit();
+                }}
+                onDelete={onOpenedDeleteAlert}
+              />
+            </OutsideClickHandler>
+          )}
+          <FolderSVG style={{ marginRight: 10, minWidth: 20 }} />
+          <div className={classes.contentContainer}>
+            <div className={classes.folderTitle}>{title}</div>
+            <div className={classes.contentRightContainer}>
+              <span style={{ marginRight: 5 }}>{bookmarks?.length}</span>
+              <Icon16Chevron />
+            </div>
           </div>
         </div>
-      </div>
-    </SwipeView>
+      </SwipeView>
+    </>
   );
 };
 

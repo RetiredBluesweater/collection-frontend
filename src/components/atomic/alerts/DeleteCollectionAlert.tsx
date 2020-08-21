@@ -1,13 +1,13 @@
 import React from 'react';
 import { Alert } from '@overrided-vkui';
 
-interface QuitTeamAlertProps {
+interface DeleteCollectionAlertProps {
   show: boolean;
   onClose(): void;
-  onTeamQuit(): void;
+  onDelete(): void;
 }
-const QuitTeamAlert: React.FC<QuitTeamAlertProps> = ({ ...props }) => {
-  const { show, onClose, onTeamQuit } = props;
+const DeleteCollectionAlert: React.FC<DeleteCollectionAlertProps> = ({ ...props }) => {
+  const { show, onClose, onDelete } = props;
   return (
     <Alert
       show={show}
@@ -20,17 +20,17 @@ const QuitTeamAlert: React.FC<QuitTeamAlertProps> = ({ ...props }) => {
           mode: 'cancel',
         },
         {
-          title: 'Выйти',
+          title: 'Удалить',
           autoclose: true,
           mode: 'destructive',
-          action: onTeamQuit,
+          action: onDelete,
         },
       ]}
     >
-      <h2>Выход из команды</h2>
-      <p>Вы уверены, что хотите выйти из команды?</p>
+      <h2>Удаление папки</h2>
+      <p>Вы уверены, что хотите удалить эту папку?</p>
     </Alert>
   );
 };
 
-export default React.memo(QuitTeamAlert);
+export default React.memo(DeleteCollectionAlert);

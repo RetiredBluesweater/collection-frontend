@@ -22,7 +22,6 @@ const ErrorRetrySnackbar: React.FC<ErrorRetrySnackbarProps> = memo(({ text, onRe
   const classes = styles({ insets });
   return (
     <Snackbar
-      className={classes.root}
       layout="horizontal"
       action={onRetry && 'Повторить'}
       onActionClick={onRetry}

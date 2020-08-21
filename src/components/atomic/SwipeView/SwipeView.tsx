@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/styles';
 interface SwipeViewProps {
   leftContent: ReactElement;
   children: ReactNode;
+  swipable: boolean;
 }
 
 const styles = makeStyles(
@@ -21,7 +22,7 @@ const styles = makeStyles(
   { classNamePrefix: 'swipeView' },
 );
 
-const SwipeView: React.FC<SwipeViewProps> = ({ children, leftContent }) => {
+const SwipeView: React.FC<SwipeViewProps> = ({ children, leftContent, swipable }) => {
   const classes = styles();
   const os = usePlatform();
   const cellMarginRight = os === OS.ANDROID ? 16 : 12;
@@ -30,6 +31,9 @@ const SwipeView: React.FC<SwipeViewProps> = ({ children, leftContent }) => {
   const [viewHeight, setViewHeight] = useState(0);
 
   const leftSwipedHandler = () => {
+    if (!swipable) {
+      return;
+    }
     const cellWidth = viewCell.current.offsetWidth;
 
     const nodesArr = Array.from(document.getElementsByClassName(`${activeClass}`)) as HTMLElement[];

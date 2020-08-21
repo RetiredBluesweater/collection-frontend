@@ -19,11 +19,7 @@ const SuccessSnackbar: React.FC<SuccessSnackbarProps> = memo(({ text, ...snackba
   const insets = useSelector((state) => state.device.currentInsets);
   const classes = styles({ insets });
   return (
-    <Snackbar
-      className={classes.root}
-      {...snackbarProps}
-      before={<Icon16Done style={{ display: 'block', color: 'var(--accent)' }} />}
-    >
+    <Snackbar {...snackbarProps} before={<Icon16Done style={{ display: 'block', color: 'var(--accent)' }} />}>
       {text}
     </Snackbar>
   );

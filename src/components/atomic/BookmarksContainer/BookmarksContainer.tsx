@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Div, Input, Button } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useActions } from 'src/hooks';
@@ -9,8 +9,13 @@ import { Collection, Bookmark } from 'src/types';
 import UncollectedContainer from '../UncollectedContainer';
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
-import { Modal } from '@overrided-vkui';
+import { Modal, useSnackbar } from '@overrided-vkui';
 import { collectionsActions } from 'src/redux/reducers/collections';
+import EditArticleModal from '../modals/EditArticleModal';
+import DeleteBookmarkAlert from '../alerts/DeleteBookmarkAlert';
+import { useMutation } from '@apollo/react-hooks';
+import { EditCollectionMutation, editCollectionMutation } from 'src/types/gql/editCollectionMutation';
+import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
 
 const TOP_SAFE_AREA = 88;
 const BOTTOM_SAFE_AREA = 105;
@@ -33,10 +38,20 @@ const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: B
   uncollected,
   rootRoute,
 }) => {
+  const [editCollectionRemote, { loading }] = useMutation<EditCollectionMutation, EditCollectionMutation.Arguments>(
+    editCollectionMutation,
+  );
+  const openSnackbar = useSnackbar();
+
   const [editCollectionModalOpened, openEditCollectionModal, closeEditCollectionModal] = useQueryFlag(
+    rootRoute,
+    'editCollectionModal',
+  );
+  const [editArticleModalOpened, openEditArticleModal, closeEditArticleModal] = useQueryFlag(
     rootRoute,
     'editArticleModal',
   );
+
   const editCollectionAction = useActions(collectionsActions.editCollection);
 
   const insets = useSelector((state) => state.device.currentInsets);
@@ -45,39 +60,56 @@ const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: B
   const sortedCollections = collections;
   const sortedUncollected = uncollected;
 
-  const [collectionName, setCollectionName] = useState('');
+  const [currentEditableCollection, setCurrentEditableCollection] = useState<Collection>();
+
+  const [currentEditableBookmark, setCurrentEditableBookmark] = useState<Bookmark>();
 
   const editCollectionSubmit = () => {
-    const folderNameLength = collectionName.trim().length;
-    if (folderNameLength >= 1 && folderNameLength <= 50) {
-      editCollectionAction({
-        ownerId: 1,
-        id: 1,
-        description: 'SDSS',
-        createdAt: new Date(),
-        bookmarks: [],
-        title: collectionName,
-      });
+    const folderNameLength = currentEditableCollection?.title.trim().length!;
+
+    if (folderNameLength >= 1 && folderNameLength <= 50 && currentEditableCollection) {
+      editCollectionRemote({
+        variables: {
+          params: {
+            id: currentEditableCollection.id,
+            title: currentEditableCollection.title,
+          },
+        },
+      })
+        .then(({ data }) => {
+          if (data?.editCollection) {
+            editCollectionAction(data.editCollection);
+          } else {
+            openSnackbar(<ErrorRetrySnackbar text={'Не удалось обновить папку'} />);
+          }
+        })
+        .catch((e) => openSnackbar(<ErrorRetrySnackbar text={e.message} />));
+
       closeEditCollectionModal();
     }
   };
 
   const onOpenEditCollectionModal = (collection: Collection) => {
-    setCollectionName(collection.title);
+    setCurrentEditableCollection(collection);
     openEditCollectionModal();
   };
 
-  const editArticleModal = (
+  const onOpenEditArticlenModal = useCallback((bookmark: Bookmark) => {
+    setCurrentEditableBookmark({ ...currentEditableBookmark, ...bookmark });
+    openEditArticleModal();
+  }, []);
+
+  const editCollectionModal = (
     <Modal title="Название папки" show={editCollectionModalOpened} id="EDIT_FOLDER" onClose={closeEditCollectionModal}>
       <Div style={{ paddingTop: 0 }}>
         <Input
-          value={collectionName}
-          onChange={(e) => setCollectionName(e.target.value)}
+          value={currentEditableCollection?.title}
+          onChange={(e) => setCurrentEditableCollection({ ...currentEditableCollection!, title: e.target.value })}
           style={{ marginBottom: 12 }}
           placeholder="Придумайте название"
         />
-        <Button onClick={editCollectionSubmit} disabled={collectionName.trim().length < 1} size="xl">
-          Сохранить
+        <Button onClick={editCollectionSubmit} disabled={currentEditableCollection?.title.trim().length! < 1} size="xl">
+          {loading ? 'Сохраняю...' : 'Сохранить'}
         </Button>
       </Div>
     </Modal>
@@ -88,13 +120,28 @@ const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: B
       <Div className={classes.root}>
         {collections && (
           <FoldersContainer
+            rootRoute={rootRoute}
             onOpenEditCollectionModal={onOpenEditCollectionModal}
             collections={sortedCollections || []}
           />
         )}
-        {uncollected && <UncollectedContainer uncollected={sortedUncollected || []} />}
+        {uncollected && (
+          <UncollectedContainer
+            rootRoute={rootRoute}
+            onOpenEditArticleModal={onOpenEditArticlenModal}
+            uncollected={sortedUncollected || []}
+          />
+        )}
       </Div>
-      {editArticleModal}
+      {editCollectionModal}
+
+      <EditArticleModal
+        opened={editArticleModalOpened}
+        onClose={closeEditArticleModal}
+        rootRoute={rootRoute}
+        collections={collections || []}
+        bookmark={currentEditableBookmark!}
+      />
     </>
   );
 };

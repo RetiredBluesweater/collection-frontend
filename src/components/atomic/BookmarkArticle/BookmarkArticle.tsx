@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState, useEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import SwipeView from '../SwipeView';
 import { Theme } from 'src/theme';
@@ -13,7 +13,7 @@ import clsx from 'clsx';
 import BookmarkToolbar from '../BookmarkToolbar';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { Bookmark } from 'src/types';
-import { collectionsActions } from 'src/redux/reducers/collections';
+import { RootRoute } from 'src/router';
 
 const styles = makeStyles(
   (theme: Theme) => ({
@@ -65,11 +65,24 @@ const styles = makeStyles(
   }),
   { classNamePrefix: 'BookmarkArticle' },
 );
-const BookmarkArticle: React.FC<Partial<Bookmark>> = ({ title, id, link, createdAt, collectionId }) => {
+interface BookmarkArticleProps extends Partial<Bookmark> {
+  onEdit(): void;
+  rootRoute: RootRoute;
+  onDelete(id: string, collectionId: string): void;
+}
+const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
+  title,
+  id,
+  link,
+  createdAt,
+  collectionId,
+  onEdit,
+  onDelete,
+  rootRoute,
+}) => {
   const [contWidth, setContWidth] = useState(0);
   const os = usePlatform();
   const setOverylayAction = useActions(appActions.setOverlay);
-  const deleteBookmarkAction = useActions(collectionsActions.deleteBookmark);
 
   const [isToolbar, setIsToolbar] = useState(false);
 
@@ -93,7 +106,7 @@ const BookmarkArticle: React.FC<Partial<Bookmark>> = ({ title, id, link, created
     }
   };
 
-  const onOutsideClick = () => {
+  const onLongtapViewClose = () => {
     const activeNode = document.getElementsByClassName('longtap--active')[0] as HTMLElement;
     if (activeNode) {
       activeNode.style.position = 'unset';
@@ -106,6 +119,7 @@ const BookmarkArticle: React.FC<Partial<Bookmark>> = ({ title, id, link, created
 
   const onClick = () => {
     console.log('click is triggered');
+    window.open(link, '_blank');
   };
 
   const defaultOptions = {
@@ -118,35 +132,50 @@ const BookmarkArticle: React.FC<Partial<Bookmark>> = ({ title, id, link, created
     return value;
   };
 
-  const onDeleteHandler = () => {
-    deleteBookmarkAction({ id, collectionId });
+  const onOpenedDeleteAlert = () => {
+    onLongtapViewClose();
+    onDelete(id, collectionId);
   };
 
+  const formatedDate = (createdAt: Date) => {
+    const date = new Date(createdAt);
+    const localDate = date.toLocaleDateString();
+    return localDate;
+  };
   return (
-    <SwipeView
-      leftContent={
-        <>
-          <EditSVG className={classes.swipeViewIcon} style={{ marginRight: 5 }} />
-          <DeleteSVG onClick={onDeleteHandler} className={classes.swipeViewIcon} />
-        </>
-      }
-    >
-      <div
-        {...events()}
-        className={clsx(classes.root, 'longtap-target', !isToolbar && classes.active, isToolbar && 'longtap--active')}
+    <>
+      <SwipeView
+        swipable={!isToolbar}
+        leftContent={
+          <>
+            <EditSVG onClick={onEdit} className={classes.swipeViewIcon} style={{ marginRight: 5 }} />
+            <DeleteSVG onClick={onOpenedDeleteAlert} className={classes.swipeViewIcon} />
+          </>
+        }
       >
-        {isToolbar && (
-          <OutsideClickHandler onOutsideClick={onOutsideClick}>
-            <BookmarkToolbar />
-          </OutsideClickHandler>
-        )}
-        <ArticleSVG className={classes.articleSvg} />
-        <div>
-          <h3 className={classes.title}>{title}</h3>
-          <span className={classes.subTitle}>{'12.05.1996'}</span>
+        <div
+          {...events()}
+          className={clsx(classes.root, 'longtap-target', !isToolbar && classes.active, isToolbar && 'longtap--active')}
+        >
+          {isToolbar && (
+            <OutsideClickHandler onOutsideClick={onLongtapViewClose}>
+              <BookmarkToolbar
+                onEdit={() => {
+                  onLongtapViewClose();
+                  onEdit();
+                }}
+                onDelete={onOpenedDeleteAlert}
+              />
+            </OutsideClickHandler>
+          )}
+          <ArticleSVG className={classes.articleSvg} />
+          <div>
+            <h3 className={classes.title}>{title}</h3>
+            <span className={classes.subTitle}>{formatedDate(createdAt!)}</span>
+          </div>
         </div>
-      </div>
-    </SwipeView>
+      </SwipeView>
+    </>
   );
 };
 

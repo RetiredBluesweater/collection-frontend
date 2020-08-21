@@ -84,10 +84,8 @@ const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete, onEdit }) =
         <div>Поделиться</div>
         <ShareSVG />
       </div>
-      <div className={classes.item}>
-        <div onClick={onDelete} style={{ color: '#E64646' }}>
-          Удалить
-        </div>
+      <div onClick={onDelete} className={classes.item}>
+        <div style={{ color: '#E64646' }}>Удалить</div>
         <DeleteSVG />
       </div>
     </div>

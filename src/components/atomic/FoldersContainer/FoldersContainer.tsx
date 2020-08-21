@@ -1,10 +1,18 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import Folder from '../Folder';
 import { makeStyles } from '@material-ui/styles';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Collection, Bookmark } from 'src/types';
 import { useRouter } from 'react-router5';
 import { RootRoute } from 'src/router';
+import DeleteCollectionAlert from '../alerts/DeleteCollectionAlert';
+import useQueryFlag from 'src/hooks/useQueryFlag';
+import { useMutation } from '@apollo/react-hooks';
+import { deleteCollectionMutation, DeleteCollectionMutation } from 'src/types/gql/deleteCollectionMutation';
+import { useSnackbar } from '@overrided-vkui';
+import { useActions } from 'src/hooks';
+import { collectionsActions } from 'src/redux/reducers/collections';
+import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
 
 const styles = makeStyles({
   root: {
@@ -39,12 +47,30 @@ interface FoldersContainerProps {
   header?: string;
   collections: Collection[];
   onOpenEditCollectionModal(collection: Collection): void;
+  rootRoute: RootRoute;
 }
-const FoldersContainer: React.FC<FoldersContainerProps> = ({ collections, onOpenEditCollectionModal, ...props }) => {
+const FoldersContainer: React.FC<FoldersContainerProps> = ({
+  collections,
+  onOpenEditCollectionModal,
+  rootRoute,
+  ...props
+}) => {
   const isHeader = !!props.header;
   const classes = styles({ isHeader });
   const animationStyles = useTransitionStyles();
-  console.log(collections);
+
+  const [deleteCollectionRemote, { loading }] = useMutation<
+    DeleteCollectionMutation,
+    DeleteCollectionMutation.Arguments
+  >(deleteCollectionMutation);
+  const openSnackbar = useSnackbar();
+  const deleteCollectionAction = useActions(collectionsActions.deleteCollection);
+
+  const [deleteCollectionAlertOpened, openDeleteCollectionAlert, closeDeleteCollectionAlert] = useQueryFlag(
+    rootRoute,
+    'deleteCollectionAlert',
+  );
+  const [collectionId, setCollectionId] = useState('');
 
   const router = useRouter();
 
@@ -55,13 +81,36 @@ const FoldersContainer: React.FC<FoldersContainerProps> = ({ collections, onOpen
     [router],
   );
 
+  const onDeleteHandler = (id: string) => {
+    setCollectionId(id);
+    openDeleteCollectionAlert();
+  };
+
+  const onDelete = (id: string) => {
+    deleteCollectionRemote({
+      variables: {
+        params: { id },
+      },
+    })
+      .then(({ data }) => {
+        if (data?.deleteCollection) {
+          deleteCollectionAction({ id });
+        } else {
+          openSnackbar(<ErrorRetrySnackbar text={'Не удалось удалить папку'} />);
+        }
+      })
+      .catch((e) => openSnackbar(<ErrorRetrySnackbar text={e.message} />));
+  };
+
   return (
     <div className={classes.root}>
       <TransitionGroup>
-        {collections.map((collection, idx) => {
+        {collections.map((collection) => {
           return (
-            <CSSTransition key={idx} timeout={500} classNames={animationStyles}>
+            <CSSTransition key={collection.id} timeout={500} classNames={animationStyles}>
               <Folder
+                onDelete={onDeleteHandler}
+                rootRoute={rootRoute}
                 onEdit={() => onOpenEditCollectionModal(collection)}
                 onClick={() => openFolder(collection.id)}
                 bookmarks={collection.bookmarks}
@@ -72,6 +121,13 @@ const FoldersContainer: React.FC<FoldersContainerProps> = ({ collections, onOpen
           );
         })}
       </TransitionGroup>
+      <DeleteCollectionAlert
+        show={deleteCollectionAlertOpened}
+        onClose={closeDeleteCollectionAlert}
+        onDelete={() => {
+          onDelete(collectionId);
+        }}
+      />
     </div>
   );
 };

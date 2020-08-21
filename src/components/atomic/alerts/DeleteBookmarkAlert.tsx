@@ -1,12 +1,12 @@
 import React from 'react';
 import { Alert } from '@overrided-vkui';
 
-interface DeleteTeamAlertProps {
+interface DeleteBookmarkAlertProps {
   show: boolean;
   onClose(): void;
   onDelete(): void;
 }
-const DeleteTeamAlert: React.FC<DeleteTeamAlertProps> = ({ ...props }) => {
+const DeleteBookmarkAlert: React.FC<DeleteBookmarkAlertProps> = ({ ...props }) => {
   const { show, onClose, onDelete } = props;
   return (
     <Alert
@@ -27,10 +27,10 @@ const DeleteTeamAlert: React.FC<DeleteTeamAlertProps> = ({ ...props }) => {
         },
       ]}
     >
-      <h2>Удаление команды</h2>
-      <p>Вы уверены, что хотите удалить команду?</p>
+      <h2>Удаление статьи</h2>
+      <p>Вы уверены, что хотите удалить эту статью?</p>
     </Alert>
   );
 };
 
-export default React.memo(DeleteTeamAlert);
+export default React.memo(DeleteBookmarkAlert);

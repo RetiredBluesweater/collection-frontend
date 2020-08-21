@@ -14,7 +14,7 @@ export const collectionsActions = unionize(
     createBookmark: ofType<Bookmark>(),
     deleteBookmark: ofType<{ id: string; collectionId: string | null }>(),
     editCollection: ofType<Partial<Collection>>(),
-    editBookmark: ofType<Partial<Bookmark>>(),
+    editBookmark: ofType<Bookmark>(),
   },
   unionizeConfig,
 );
@@ -77,8 +77,25 @@ export function collectionsReducer(state: CollectionsReducerState = initialState
         collection.id === id ? { ...collection, ...rest } : collection,
       ),
     }),
-    editBookmark: ({ id, collectionId, ...rest }) => {
-      if (collectionId) {
+    editBookmark: (newBookmark) => {
+      const { id, collectionId } = newBookmark;
+
+      const isUncollected = state.uncollected.find((item) => item.id === id);
+
+      if (isUncollected && collectionId) {
+        return {
+          ...state,
+          uncollected: state.uncollected.filter((item) => item.id !== id),
+          collections: state.collections.map((collection) =>
+            collectionId === collection.id
+              ? {
+                  ...collection,
+                  bookmarks: [...collection.bookmarks, newBookmark],
+                }
+              : collection,
+          ),
+        };
+      } else if (collectionId && !isUncollected) {
         return {
           ...state,
           collections: state.collections.map((collection) =>
@@ -86,7 +103,7 @@ export function collectionsReducer(state: CollectionsReducerState = initialState
               ? {
                   ...collection,
                   bookmarks: collection.bookmarks.map((bookmark) =>
-                    bookmark.id === id ? { ...bookmark, ...rest } : bookmark,
+                    bookmark.id === id ? { ...bookmark, ...newBookmark } : bookmark,
                   ),
                 }
               : collection,
@@ -95,7 +112,7 @@ export function collectionsReducer(state: CollectionsReducerState = initialState
       } else {
         return {
           ...state,
-          uncollected: state.uncollected.map((item) => (item.id !== id ? { ...item, ...rest } : item)),
+          uncollected: state.uncollected.map((item) => (item.id === id ? { ...item, ...newBookmark } : item)),
         };
       }
     },

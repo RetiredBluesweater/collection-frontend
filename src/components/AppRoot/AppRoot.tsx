@@ -29,6 +29,10 @@ import { deviceActions } from '../../redux/reducers/device';
 import { OverlayProvider } from '../overridedVkUi';
 import ApolloClient from 'apollo-client';
 import { createApolloClient } from '../ApolloProvider';
+import {
+  CollectionsWithUncollectedBookmarksQuery,
+  collectionsWithUncollectedBookmarksQuery,
+} from 'src/types/gql/collectionsWithUncollectedBookmarksQuery';
 
 // Assign human-readable store provider name for debugging purposes
 ReactReduxContext.displayName = 'AppRoot';
@@ -197,16 +201,21 @@ export class AppRoot extends PureComponent<Props, AppRootState> {
 
     try {
       // Performing all async operations and getting data to launch application
-      const [storage, vkUser, register] = await Promise.all([
+      const [storage, vkUser, register, collections] = await Promise.all([
         getStorageKeys<StorageValuesMap>(...Object.values(StorageFieldEnum)),
         vkBridge.send('VKWebAppGetUserInfo'),
         this.apolloClient.mutate<RegisterMutation, RegisterMutation.Arguments>({ mutation: registerMutation }),
+        this.apolloClient.query<
+          CollectionsWithUncollectedBookmarksQuery,
+          CollectionsWithUncollectedBookmarksQuery.Arguments
+        >({ query: collectionsWithUncollectedBookmarksQuery }),
       ]);
 
       // Create history depending on initial data
       this.store = createReduxStore({
         ...this.store.getState(),
         vkUser,
+        collections: { collections: collections.data.collections, uncollected: collections.data.uncollectedBookmarks },
       });
 
       // this.setState({loading: false, storage: {}, history});

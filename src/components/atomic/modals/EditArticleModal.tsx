@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, useSnackbar } from '@overrided-vkui';
 import {
   PanelHeaderButton,
@@ -10,46 +10,53 @@ import {
   Group,
   List,
   Cell,
-  Div,
 } from '@vkontakte/vkui';
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
-import { Collection } from 'src/types';
+import { Collection, Bookmark } from 'src/types';
 import Icon24CheckCircleOn from '@vkontakte/icons/dist/24/check_circle_on';
-import { ReactComponent as FolderAddSVG } from '../../../assets/folder_add.svg';
 import { useActions } from 'src/hooks';
 import { collectionsActions } from 'src/redux/reducers/collections';
 import { ValidatedArticleModalFieldsProps } from 'src/components/panels/types/types';
 import { validationArticleModalInitial, validateArticleModal } from './utils';
 import { useMutation } from '@apollo/react-hooks';
-import { CreateBookmarkMutation, createBookmarkMutation } from 'src/types/gql/createBookmarkMutation';
+import { EditBookmarkMutation, editBookmarkMutation } from 'src/types/gql/editBookmarkMutation';
 import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
 
-interface AddArticleModalProps {
+interface EditArticleModalProps {
   opened: boolean;
   onClose: () => void;
   collections: Collection[];
+  rootRoute: RootRoute;
+  bookmark: Bookmark;
 }
 
-export interface AddArticleModalStateProps {
+export interface EditArticleModalStateProps {
   title: string;
   link: string;
   collectionId: string | null;
 }
 
-const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, collections }) => {
-  const openSnackbar = useSnackbar();
-  const [foldersModalOpened, openFoldersModal, closeFoldersModal] = useQueryFlag(RootRoute.MAIN, 'foldersModal');
-  const createBookmarkAction = useActions(collectionsActions.createBookmark);
-  const [createBookmarkRemote, { loading }] = useMutation<CreateBookmarkMutation, CreateBookmarkMutation.Arguments>(
-    createBookmarkMutation,
-  );
+const EditArticleModal: React.FC<EditArticleModalProps> = ({ opened, onClose, collections, bookmark, rootRoute }) => {
+  const [foldersModalOpened, openFoldersModal, closeFoldersModal] = useQueryFlag(rootRoute, 'editFoldersModal');
 
-  const [article, setArticle] = useState<AddArticleModalStateProps>({
-    title: '',
-    link: '',
-    collectionId: '',
+  const editArticleAction = useActions(collectionsActions.editBookmark);
+  const [editBookmarkRemote, { loading }] = useMutation<EditBookmarkMutation, EditBookmarkMutation.Arguments>(
+    editBookmarkMutation,
+  );
+  const openSnackbar = useSnackbar();
+
+  const [article, setArticle] = useState<EditArticleModalStateProps>({
+    title: bookmark?.title || '',
+    link: bookmark?.link || '',
+    collectionId: bookmark?.collectionId || '',
   });
+
+  useEffect(() => {
+    if (bookmark) {
+      setArticle({ ...article, title: bookmark.title, link: bookmark.link, collectionId: bookmark.collectionId });
+    }
+  }, [bookmark]);
 
   const [validationFields, setValidationFields] = useState<ValidatedArticleModalFieldsProps>(
     validationArticleModalInitial,
@@ -79,25 +86,24 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
     if (!status) {
       return;
     }
-    createBookmarkRemote({
+    editBookmarkRemote({
       variables: {
         params: {
           collectionId: article.collectionId,
+          id: bookmark.id,
           link: article.link,
           title: article.title,
         },
       },
     })
       .then(({ data }) => {
-        if (data?.createBookmark) {
-          createBookmarkAction(data.createBookmark);
+        if (data?.editBookmark) {
+          editArticleAction(data.editBookmark);
         } else {
-          openSnackbar(<ErrorRetrySnackbar text={'Не удалось создать закладку'} />);
+          openSnackbar(<ErrorRetrySnackbar text={'Не удалось обновить закладку'} />);
         }
       })
-      .catch((e) => {
-        openSnackbar(<ErrorRetrySnackbar text={e.message} />);
-      });
+      .catch((e) => openSnackbar(<ErrorRetrySnackbar text={e.message} />));
 
     onClose();
     setValidationFields(validationArticleModalInitial);
@@ -116,7 +122,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
 
   const foldersModal = (
     <Modal
-      id="FOLDERS"
+      id="EDIT_FOLDERS"
       title="Папка для сохранения"
       show={foldersModalOpened}
       fullHeight
@@ -133,7 +139,10 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
           {collections.map((collection, idx) => {
             return (
               <Cell
-                onClick={() => addToCollectionHandler(collection.id)}
+                onClick={() => {
+                  console.log('hehe');
+                  addToCollectionHandler(collection.id);
+                }}
                 asideContent={article.collectionId === collection.id ? <Icon24CheckCircleOn /> : null}
                 key={idx}
               >
@@ -153,9 +162,9 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
             Очистить
           </PanelHeaderButton>
         }
-        title="Добавить статью"
-        id="ADD_ARTICLE"
-        show={opened}
+        title="Редактировать статью"
+        id="EDIT_ARTICLE"
+        show={opened || foldersModalOpened}
         onClose={onClose}
       >
         <FormLayout>
@@ -192,7 +201,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
             />
           </FormLayoutGroup>
           <Button size="xl" onClick={submitHandler}>
-            {loading ? 'Добавляю...' : 'Добавить'}
+            {loading ? 'Сохраняю...' : 'Сохранить'}
           </Button>
         </FormLayout>
       </Modal>
@@ -201,4 +210,4 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
   );
 };
 
-export default React.memo(AddArticleModal);
+export default React.memo(EditArticleModal);

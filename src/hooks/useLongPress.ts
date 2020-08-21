@@ -51,7 +51,7 @@ export const useLongPress = (
           window.navigator.vibrate(200);
         }
 
-        setLongPressTriggered(true);
+        /* setLongPressTriggered(true); */
       }, delay);
     },
     [onLongPress, delay, shouldPreventDefault],
@@ -68,6 +68,7 @@ export const useLongPress = (
       }
 
       timeout.current && clearTimeout(timeout.current);
+      console.log(shouldTriggerClick, longPressTriggered);
       shouldTriggerClick && !longPressTriggered && onClick();
       event.target.removeEventListener('touchmove', getCoordinates);
 
