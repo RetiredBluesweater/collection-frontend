@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Div, Input, Button } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useActions } from 'src/hooks';
@@ -12,7 +12,6 @@ import { RootRoute } from 'src/router';
 import { Modal, useSnackbar } from '@overrided-vkui';
 import { collectionsActions } from 'src/redux/reducers/collections';
 import EditArticleModal from '../modals/EditArticleModal';
-import DeleteBookmarkAlert from '../alerts/DeleteBookmarkAlert';
 import { useMutation } from '@apollo/react-hooks';
 import { EditCollectionMutation, editCollectionMutation } from 'src/types/gql/editCollectionMutation';
 import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
@@ -28,7 +27,9 @@ const styles = makeStyles(
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      minHeight: `calc(100vh - ${252}px)`,
+      /* minHeight: (props: { insets: Insets }) => `calc(100vh - ${252 + props.insets.bottom + props.insets.top}px)`, */
+      minHeight: (props: { insets: Insets }) =>
+        `calc(var(--vh, 1vh) * 100 - ${305 + props.insets.bottom + props.insets.top}px)`,
     },
   },
   { classNamePrefix: 'BookmarksContainer' },
@@ -99,6 +100,13 @@ const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: B
     openEditArticleModal();
   }, []);
 
+  useEffect(() => {
+    // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    const vh = window.innerHeight * 0.01;
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }, []);
+
   const editCollectionModal = (
     <Modal title="Название папки" show={editCollectionModalOpened} id="EDIT_FOLDER" onClose={closeEditCollectionModal}>
       <Div style={{ paddingTop: 0 }}>
@@ -139,7 +147,6 @@ const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: B
         opened={editArticleModalOpened}
         onClose={closeEditArticleModal}
         rootRoute={rootRoute}
-        collections={collections || []}
         bookmark={currentEditableBookmark!}
       />
     </>

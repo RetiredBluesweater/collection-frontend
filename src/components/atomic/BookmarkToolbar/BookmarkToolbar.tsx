@@ -1,12 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { ReactComponent as EditSVG } from '../../../assets/edit.svg';
 import { ReactComponent as FolderArrowSVG } from '../../../assets/folder_arrow.svg';
 import { ReactComponent as DeleteSVG } from '../../../assets/deleteSVG.svg';
 import { ReactComponent as SelectSVG } from '../../../assets/select.svg';
 import { ReactComponent as ShareSVG } from '../../../assets/share.svg';
-
-import { useSelector } from 'src/hooks';
 
 const styles = makeStyles(
   {
@@ -16,7 +14,7 @@ const styles = makeStyles(
       bottom: (props: { isOutOfWindow: boolean }) => (props.isOutOfWindow ? 'calc(100% + 20px)' : 'unset'),
       left: 0,
       width: 250,
-      background: 'rgba(249, 249, 249)',
+      background: 'rgba(249, 249, 249, 0.78)',
       borderRadius: '10px',
       display: 'flex',
       flexDirection: 'column',
@@ -29,11 +27,17 @@ const styles = makeStyles(
       justifyContent: 'space-between',
       lineHeight: '22px',
       fontSize: '17px',
-      borderBottom: '0.5px solid rgba(60, 60, 67, 0.29);',
+      borderBottom: '0.5px solid rgba(60, 60, 67, 0.29)',
       '&:active': {
-        opacity: 0.7,
-        borderRadius: 10,
-        background: '#dcdcdc',
+        background: '#a5a5a58f',
+      },
+      '&:first-child': {
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+      },
+      '&:last-child': {
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
       },
       '& svg': {
         width: 22,

@@ -71,6 +71,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
     } else {
       setArticle({ ...article, collectionId: id });
     }
+    onClose();
   };
 
   const submitHandler = () => {

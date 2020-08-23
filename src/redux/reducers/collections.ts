@@ -15,6 +15,7 @@ export const collectionsActions = unionize(
     deleteBookmark: ofType<{ id: string; collectionId: string | null }>(),
     editCollection: ofType<Partial<Collection>>(),
     editBookmark: ofType<Bookmark>(),
+    transfer: ofType<{ bookmark: Bookmark; collectionId: string }>(),
   },
   unionizeConfig,
 );
@@ -81,6 +82,10 @@ export function collectionsReducer(state: CollectionsReducerState = initialState
       const { id, collectionId } = newBookmark;
 
       const isUncollected = state.uncollected.find((item) => item.id === id);
+      const prevCollectionId = state.collections.find((collection) =>
+        collection.bookmarks.find((bookmark) => bookmark.id === id),
+      )?.id;
+      const isSameCollection = prevCollectionId === collectionId;
 
       if (isUncollected && collectionId) {
         return {
@@ -95,7 +100,28 @@ export function collectionsReducer(state: CollectionsReducerState = initialState
               : collection,
           ),
         };
-      } else if (collectionId && !isUncollected) {
+      } else if (!isUncollected && !collectionId && prevCollectionId) {
+        return {
+          ...state,
+          uncollected: [...state.uncollected, newBookmark],
+          collections: state.collections.map((collection) =>
+            collection.id === prevCollectionId
+              ? { ...collection, bookmarks: collection.bookmarks.filter((bookmark) => bookmark.id !== id) }
+              : collection,
+          ),
+        };
+      } else if (!isUncollected && collectionId && !isSameCollection) {
+        return {
+          ...state,
+          collections: state.collections.map((collection) =>
+            collection.id === prevCollectionId
+              ? { ...collection, bookmarks: collection.bookmarks.filter((bookmark) => bookmark.id !== id) }
+              : collection.id === collectionId
+              ? { ...collection, bookmarks: [...collection.bookmarks, newBookmark] }
+              : collection,
+          ),
+        };
+      } else if (!isUncollected && collectionId && isSameCollection) {
         return {
           ...state,
           collections: state.collections.map((collection) =>
@@ -113,6 +139,36 @@ export function collectionsReducer(state: CollectionsReducerState = initialState
         return {
           ...state,
           uncollected: state.uncollected.map((item) => (item.id === id ? { ...item, ...newBookmark } : item)),
+        };
+      }
+    },
+    transfer: ({ bookmark, collectionId }) => {
+      const { id } = bookmark;
+      const isUncollected = state.uncollected.find((item) => item.id === id);
+      const prevCollectionId = state.collections.find((collection) =>
+        collection.bookmarks.find((bookmark) => bookmark.id === id),
+      )?.id;
+
+      if (isUncollected && collectionId) {
+        return {
+          ...state,
+          uncollected: state.uncollected.filter((item) => item.id !== id),
+          collections: state.collections.map((collection) =>
+            collection.id === collectionId
+              ? { ...collection, bookmarks: [...collection.bookmarks, bookmark] }
+              : collection,
+          ),
+        };
+      } else {
+        return {
+          ...state,
+          collections: state.collections.map((collection) =>
+            collection.id === prevCollectionId
+              ? { ...collection, bookmarks: collection.bookmarks.filter((bookmark) => bookmark.id !== id) }
+              : collection.id === collectionId
+              ? { ...collection, bookmarks: [...collection.bookmarks, bookmark] }
+              : collection,
+          ),
         };
       }
     },

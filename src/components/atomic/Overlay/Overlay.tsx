@@ -1,3 +1,4 @@
+import './overlay.css';
 import React, { useRef, useMemo, useCallback, useEffect } from 'react';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -20,7 +21,7 @@ const styles = makeStyles(
       right: 0,
       zIndex: (props: { blur: boolean }) => (props.blur ? 12 : 10),
       background: 'rgba(0,0,0,0.4)',
-      backdropFilter: (props: { blur: boolean }) => (props.blur ? 'blur(24px)' : 'unset'),
+      /*  backdropFilter: (props: { blur: boolean }) => (props.blur ? 'blur(24px)' : 'unset'), */
       opacity: 0,
       display: 'none',
     },
@@ -63,12 +64,15 @@ const Overlay: React.FC<{ enable: boolean; blur?: boolean }> = ({ enable, blur =
   const classes = styles({ blur });
   const isSetViewSettingsSupported = useRef(vkBridge.supports('VKWebAppSetViewSettings')).current;
 
+  const ref = useRef<any>(null);
+
   const theme = useTheme<Theme>();
   const { mode, customStyle } = useSelector((state) => ({
     mode: state.device.currentStatusBarMode,
     customStyle: state.device.customStatusBarStyle,
   }));
 
+  const blurClass = 'blur-fix-prefix';
   const currentStyle = useMemo(() => {
     return mode === 'custom' ? customStyle : theme.palette.statusBar[mode];
   }, [mode, customStyle, theme]);
@@ -115,15 +119,25 @@ const Overlay: React.FC<{ enable: boolean; blur?: boolean }> = ({ enable, blur =
 
   useEffect(() => {
     if (enable) {
-      disableBodyScroll(document.querySelector('#root')!);
+      disableBodyScroll(ref.current);
     } else {
-      enableBodyScroll(document.querySelector('#root')!);
+      enableBodyScroll(ref.current);
     }
 
     return () => clearAllBodyScrollLocks();
   }, [enable]);
 
-  return <div className={clsx(classes.root, enable && classes.enable, !enable && prevStatus && classes.disable)}></div>;
+  return (
+    <div
+      ref={ref}
+      className={clsx(
+        classes.root,
+        enable && classes.enable,
+        !enable && prevStatus && classes.disable,
+        blur && blurClass,
+      )}
+    ></div>
+  );
 };
 
 export default React.memo(Overlay);

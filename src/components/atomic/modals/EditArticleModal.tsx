@@ -15,7 +15,7 @@ import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
 import { Collection, Bookmark } from 'src/types';
 import Icon24CheckCircleOn from '@vkontakte/icons/dist/24/check_circle_on';
-import { useActions } from 'src/hooks';
+import { useActions, useSelector } from 'src/hooks';
 import { collectionsActions } from 'src/redux/reducers/collections';
 import { ValidatedArticleModalFieldsProps } from 'src/components/panels/types/types';
 import { validationArticleModalInitial, validateArticleModal } from './utils';
@@ -26,7 +26,6 @@ import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
 interface EditArticleModalProps {
   opened: boolean;
   onClose: () => void;
-  collections: Collection[];
   rootRoute: RootRoute;
   bookmark: Bookmark;
 }
@@ -37,7 +36,8 @@ export interface EditArticleModalStateProps {
   collectionId: string | null;
 }
 
-const EditArticleModal: React.FC<EditArticleModalProps> = ({ opened, onClose, collections, bookmark, rootRoute }) => {
+const EditArticleModal: React.FC<EditArticleModalProps> = ({ opened, onClose, bookmark, rootRoute }) => {
+  const collections = useSelector((state) => state.collections.collections);
   const [foldersModalOpened, openFoldersModal, closeFoldersModal] = useQueryFlag(rootRoute, 'editFoldersModal');
 
   const editArticleAction = useActions(collectionsActions.editBookmark);
@@ -78,6 +78,7 @@ const EditArticleModal: React.FC<EditArticleModalProps> = ({ opened, onClose, co
     } else {
       setArticle({ ...article, collectionId: id });
     }
+    onClose();
   };
 
   const submitHandler = () => {

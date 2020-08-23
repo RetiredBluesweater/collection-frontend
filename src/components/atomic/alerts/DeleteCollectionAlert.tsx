@@ -28,7 +28,7 @@ const DeleteCollectionAlert: React.FC<DeleteCollectionAlertProps> = ({ ...props 
       ]}
     >
       <h2>Удаление папки</h2>
-      <p>Вы уверены, что хотите удалить эту папку?</p>
+      <p>Вы уверены, что хотите удалить эту папку и ее содержимое?</p>
     </Alert>
   );
 };

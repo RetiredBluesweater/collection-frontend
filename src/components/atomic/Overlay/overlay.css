@@ -1,0 +1,4 @@
+.blur-fix-prefix {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
