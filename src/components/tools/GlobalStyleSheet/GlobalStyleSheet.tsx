@@ -41,9 +41,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       '-webkit-text-size-adjust': '100%',
       '-webkit-overflow-scrolling': 'touch',
     },
-    '#root': {
-      height: '100%',
-    },
+
     'body, #root': {
       margin: 0,
       padding: 0,

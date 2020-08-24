@@ -31,7 +31,7 @@ const styles = makeStyles(
       flexDirection: 'column',
       /* minHeight: (props: { insets: Insets }) => `calc(100vh - ${252 + props.insets.bottom + props.insets.top}px)`, */
       minHeight: (props: { insets: Insets }) =>
-        `calc(var(--vh, 1vh) * 100 - ${285 + props.insets.bottom + props.insets.top}px)`,
+        `calc(var(--vh, 1vh) * 100 - ${250 + props.insets.bottom + props.insets.top}px)`,
     },
   },
   { classNamePrefix: 'BookmarksContainer' },
@@ -58,6 +58,7 @@ const BookmarksContainer: React.FC<{
     rootRoute,
     'editArticleModal',
   );
+
   const [transferModalOpened, openTransferModal, closeTransferModal] = useQueryFlag(rootRoute, 'transferModal');
 
   const editCollectionAction = useActions(collectionsActions.editCollection);

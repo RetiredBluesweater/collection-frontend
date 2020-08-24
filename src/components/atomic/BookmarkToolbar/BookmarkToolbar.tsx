@@ -5,6 +5,7 @@ import { ReactComponent as FolderArrowSVG } from '../../../assets/folder_arrow.s
 import { ReactComponent as DeleteSVG } from '../../../assets/deleteSVG.svg';
 import { ReactComponent as SelectSVG } from '../../../assets/select.svg';
 import { ReactComponent as ShareSVG } from '../../../assets/share.svg';
+import clsx from 'clsx';
 
 const styles = makeStyles(
   {
@@ -12,9 +13,6 @@ const styles = makeStyles(
       position: 'absolute',
       top: (props: { isOutOfWindow: boolean }) => (props.isOutOfWindow ? 'unset' : 'calc(100% + 20px)'),
       bottom: (props: { isOutOfWindow: boolean }) => (props.isOutOfWindow ? 'calc(100% + 20px)' : 'unset'),
-      transition: 'all 0.2s',
-      transform: 'scale(0)',
-      transformOrigin: 'top left',
       left: 0,
       width: 250,
       background: 'rgba(249, 249, 249, 0.78)',
@@ -47,6 +45,7 @@ const styles = makeStyles(
       },
     },
   },
+
   { classNamePrefix: 'bookmark-toolbar' },
 );
 
@@ -69,14 +68,6 @@ const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete, onEdit, onT
       setIsOutOfWindow(true);
     }
   }, []);
-
-  useEffect(() => {
-    ref.current.style.transform = 'scale(1)';
-  }, []);
-
-  const onItemClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    console.log('hey');
-  };
 
   return (
     <div ref={ref} className={classes.root}>
