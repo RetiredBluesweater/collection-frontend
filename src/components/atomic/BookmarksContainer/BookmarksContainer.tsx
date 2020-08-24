@@ -42,7 +42,8 @@ const BookmarksContainer: React.FC<{
   rootRoute: RootRoute;
   q: string;
   onFolderOpen?(folderId: string): void;
-}> = ({ collections, uncollected, rootRoute, q, onFolderOpen }) => {
+  isSearchAll?: boolean;
+}> = ({ collections, uncollected, rootRoute, q, onFolderOpen, isSearchAll = false }) => {
   const [editCollectionRemote, { loading }] = useMutation<EditCollectionMutation, EditCollectionMutation.Arguments>(
     editCollectionMutation,
   );
@@ -132,6 +133,11 @@ const BookmarksContainer: React.FC<{
     </Modal>
   );
 
+  const allBookmarks = useMemo(() => {
+    const result = collections?.map((collection) => Object.assign({}, ...collection.bookmarks));
+    return result;
+  }, [collections]);
+
   const getSortedCollections = useMemo(() => {
     if (q && collections) {
       return collections.filter((collection) => {
@@ -148,11 +154,16 @@ const BookmarksContainer: React.FC<{
 
   const getSortedUncollected = useMemo(() => {
     if (q && uncollected) {
-      const sortedUncollected = uncollected.filter((bookmark) => {
+      let definedUncollected: Bookmark[] = uncollected;
+      if (isSearchAll && allBookmarks) {
+        definedUncollected = [...allBookmarks, ...uncollected];
+      }
+
+      const sortedUncollected = definedUncollected.filter((bookmark) => {
         return (
           bookmark.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
           bookmark.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
-          bookmark.title.includes(q)
+          bookmark.title.toLowerCase().includes(q.toLowerCase())
         );
       });
       return sortedUncollected;
@@ -166,13 +177,12 @@ const BookmarksContainer: React.FC<{
       if (collections && uncollected) {
         if (getSortedCollections?.length! < 1 && getSortedUncollected?.length! < 1) {
           setPlug(true);
-        }
-      } else {
-        if (getSortedCollections?.length! < 1 || getSortedUncollected?.length! < 1) {
-          setPlug(true);
+        } else {
+          setPlug(false);
         }
       }
-    } else {
+    }
+    if (!q) {
       setPlug(false);
     }
   }, [q]);

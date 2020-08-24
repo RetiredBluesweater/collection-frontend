@@ -30,7 +30,7 @@ const styles = makeStyles(
       display: 'block',
     },
     disable: {
-      display: 'block',
+      display: 'none',
       visibility: 'hidden',
       animation: '$fadeOut 0.4s',
     },

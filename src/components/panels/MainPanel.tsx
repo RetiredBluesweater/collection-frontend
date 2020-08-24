@@ -87,6 +87,7 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
       <BookmarksHeader onSearchChange={onSearchChange} />
       <BookmarksContainer
+        isSearchAll={true}
         q={search}
         rootRoute={RootRoute.MAIN}
         collections={collections}

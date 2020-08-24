@@ -9,7 +9,7 @@ const ConfigProvider = memo(({ children }) => {
   }));
 
   return (
-    <VKConfigProvider scheme={scheme} isWebView={true} transitionMotionEnabled={false}>
+    <VKConfigProvider scheme={scheme} isWebView={true} transitionMotionEnabled={true}>
       {children}
     </VKConfigProvider>
   );

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { ReactComponent as EditSVG } from '../../../assets/edit.svg';
 import { ReactComponent as FolderArrowSVG } from '../../../assets/folder_arrow.svg';
@@ -12,6 +12,9 @@ const styles = makeStyles(
       position: 'absolute',
       top: (props: { isOutOfWindow: boolean }) => (props.isOutOfWindow ? 'unset' : 'calc(100% + 20px)'),
       bottom: (props: { isOutOfWindow: boolean }) => (props.isOutOfWindow ? 'calc(100% + 20px)' : 'unset'),
+      transition: 'all 0.2s',
+      transform: 'scale(0)',
+      transformOrigin: 'top left',
       left: 0,
       width: 250,
       background: 'rgba(249, 249, 249, 0.78)',
@@ -65,6 +68,10 @@ const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete, onEdit, onT
     if (!isOut) {
       setIsOutOfWindow(true);
     }
+  }, []);
+
+  useEffect(() => {
+    ref.current.style.transform = 'scale(1)';
   }, []);
 
   const onItemClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

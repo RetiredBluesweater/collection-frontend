@@ -78,7 +78,6 @@ interface FolderProps extends Partial<Collection> {
 }
 const Folder: React.FC<FolderProps> = ({ onClick, onEdit, onDelete, rootRoute, ...props }) => {
   const { bookmarks, id, title } = props;
-  console.log(id, title);
 
   const [contWidth, setContWidth] = useState(0);
   const setOverylayAction = useActions(appActions.setOverlay);
