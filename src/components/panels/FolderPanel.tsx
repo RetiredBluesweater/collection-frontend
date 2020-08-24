@@ -6,7 +6,7 @@ import BookmarksHeader from '../atomic/BookmarksHeader/BookmarksHeader';
 import BookmarksContainer from '../atomic/BookmarksHeader';
 import { RootRoute } from 'src/router';
 
-const FolderPanel: React.FC<{ route: State }> = ({ route }) => {
+const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack }) => {
   const { id } = route.params;
   const collections = useSelector((state) => state.collections.collections);
   const collection = collections.find((collection) => collection.id === id);
@@ -21,7 +21,7 @@ const FolderPanel: React.FC<{ route: State }> = ({ route }) => {
   } else {
     return (
       <>
-        <PanelHeader left={<PanelHeaderBack onClick={() => window.history.back()} />}>{collection.title}</PanelHeader>
+        <PanelHeader left={<PanelHeaderBack onClick={goBack} />}>{collection.title}</PanelHeader>
         <BookmarksHeader onSearchChange={onSearchChange} />
         <BookmarksContainer q={search} rootRoute={RootRoute.FOLDER} uncollected={collection.bookmarks} />
       </>

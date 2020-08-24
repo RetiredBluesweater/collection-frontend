@@ -56,7 +56,7 @@ const MainView: React.FC<MainViewProps> = ({ route: rootRoute, ...viewProps }) =
         <MainPanel onFolderOpen={openFolder} />
       </Panel>
       <Panel className={classes.root} id={RootRoute.FOLDER}>
-        <FolderPanel route={route} />
+        <FolderPanel goBack={goHistoryBack} route={route} />
       </Panel>
     </View>
   );
