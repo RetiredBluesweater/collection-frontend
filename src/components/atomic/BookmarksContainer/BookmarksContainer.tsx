@@ -154,7 +154,7 @@ const BookmarksContainer: React.FC<{
 
   const getSortedUncollected = useMemo(() => {
     let definedUncollected: Bookmark[] | undefined = uncollected;
-    if (isSearchAll && allBookmarks && allBookmarks[0]?.title) {
+    if (isSearchAll && allBookmarks && allBookmarks[0]?.title && !uncollected) {
       definedUncollected = allBookmarks;
     } else if (isSearchAll && allBookmarks && allBookmarks[0]?.title && uncollected) {
       definedUncollected = [...allBookmarks, ...uncollected];
