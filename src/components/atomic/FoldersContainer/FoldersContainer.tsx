@@ -48,11 +48,13 @@ interface FoldersContainerProps {
   collections: Collection[];
   onOpenEditCollectionModal(collection: Collection): void;
   rootRoute: RootRoute;
+  onFolderOpen(folderId: string): void;
 }
 const FoldersContainer: React.FC<FoldersContainerProps> = ({
   collections,
   onOpenEditCollectionModal,
   rootRoute,
+  onFolderOpen,
   ...props
 }) => {
   const isHeader = !!props.header;
@@ -112,7 +114,7 @@ const FoldersContainer: React.FC<FoldersContainerProps> = ({
                 onDelete={onDeleteHandler}
                 rootRoute={rootRoute}
                 onEdit={() => onOpenEditCollectionModal(collection)}
-                onClick={() => openFolder(collection.id)}
+                onClick={() => onFolderOpen(collection.id)}
                 bookmarks={collection.bookmarks}
                 title={collection.title}
                 id={collection.id}

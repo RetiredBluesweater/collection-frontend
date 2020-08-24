@@ -41,7 +41,8 @@ const BookmarksContainer: React.FC<{
   uncollected?: Bookmark[];
   rootRoute: RootRoute;
   q: string;
-}> = ({ collections, uncollected, rootRoute, q }) => {
+  onFolderOpen?(folderId: string): void;
+}> = ({ collections, uncollected, rootRoute, q, onFolderOpen }) => {
   const [editCollectionRemote, { loading }] = useMutation<EditCollectionMutation, EditCollectionMutation.Arguments>(
     editCollectionMutation,
   );
@@ -181,8 +182,9 @@ const BookmarksContainer: React.FC<{
       <Overlay enable={isOverlay} blur={true} />
       <Div className={classes.root}>
         {plug && <div style={{ marginTop: 5 }}>По вашему запросу ничего не найдено</div>}
-        {collections && (
+        {collections && onFolderOpen && (
           <FoldersContainer
+            onFolderOpen={onFolderOpen}
             rootRoute={rootRoute}
             onOpenEditCollectionModal={onOpenEditCollectionModal}
             collections={getSortedCollections || []}

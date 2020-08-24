@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PanelHeader, Input, Button, Div, FixedLayout, Search } from '@vkontakte/vkui';
+import { PanelHeader, Input, Button, Div } from '@vkontakte/vkui';
 import AddBtn from '../atomic/AddBtn';
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
@@ -13,7 +13,10 @@ import { useMutation } from '@apollo/react-hooks';
 import { CreateCollectionMutation, createCollectionMutation } from 'src/types/gql/createCollectionMutation';
 import ErrorRetrySnackbar from '../atomic/snackbars/ErrorRetrySnackbar';
 
-const MainPanel = () => {
+interface MainPanelProps {
+  onFolderOpen(folderId: string): void;
+}
+const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
   const [addFolderModalOpened, openAddFolderModal, closeAddFolderModal] = useQueryFlag(
     RootRoute.MAIN,
     'addFolderModal',
@@ -83,7 +86,13 @@ const MainPanel = () => {
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
       <BookmarksHeader onSearchChange={onSearchChange} />
-      <BookmarksContainer q={search} rootRoute={RootRoute.MAIN} collections={collections} uncollected={uncollected} />
+      <BookmarksContainer
+        q={search}
+        rootRoute={RootRoute.MAIN}
+        collections={collections}
+        uncollected={uncollected}
+        onFolderOpen={onFolderOpen}
+      />
       <AddBtn
         modalOpened={addFolderModalOpened || addArticleModalOpened}
         openAddFolderModalHandler={() => {

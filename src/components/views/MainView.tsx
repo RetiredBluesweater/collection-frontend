@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import View, { ViewProps } from '@vkontakte/vkui/dist/components/View/View';
 import { Panel } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import { useSelector } from 'src/hooks';
 import { Insets } from '@vkontakte/vk-bridge';
 import MainPanel from '../panels/MainPanel';
+import FolderPanel from '../panels/FolderPanel';
+import { State } from 'router5';
+import { useRouteNode } from 'react-router5';
+import { RootRoute } from 'src/router';
 
 const styles = makeStyles(
   {
@@ -18,15 +22,41 @@ const styles = makeStyles(
   },
   { classNamePrefix: 'main' },
 );
-const MainView: React.FC<Omit<ViewProps, 'activePanel'>> = (viewProps) => {
+interface MainViewProps extends Omit<ViewProps, 'activePanel'> {
+  route: State;
+}
+const MainView: React.FC<MainViewProps> = ({ route: rootRoute, ...viewProps }) => {
   const insets = useSelector((state) => state.device.currentInsets);
+  const { route, router } = useRouteNode(RootRoute.MAIN);
+
+  const activePanel = route.name;
 
   const classes = styles({ insets });
 
+  /* IOS Swipe back */
+
+  const [history, setHistory] = useState<string[]>([activePanel]);
+
+  const openFolder = useCallback(
+    (folderId: string) => {
+      setHistory((prev) => prev.concat(RootRoute.FOLDER));
+      router.navigate(RootRoute.FOLDER, { id: folderId });
+    },
+    [router],
+  );
+
+  const goHistoryBack = useCallback(() => {
+    setHistory((prev) => prev.slice(0, -1));
+    window.history.back();
+  }, []);
+
   return (
-    <View {...viewProps} activePanel="main.panel" onSwipeBack={() => window.history.back()}>
-      <Panel className={classes.root} id="main.panel">
-        <MainPanel />
+    <View {...viewProps} activePanel={activePanel} onSwipeBack={goHistoryBack} history={history}>
+      <Panel className={classes.root} id={RootRoute.MAIN}>
+        <MainPanel onFolderOpen={openFolder} />
+      </Panel>
+      <Panel className={classes.root} id={RootRoute.FOLDER}>
+        <FolderPanel route={route} />
       </Panel>
     </View>
   );

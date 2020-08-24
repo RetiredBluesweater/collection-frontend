@@ -7,10 +7,7 @@ import Root from '@vkontakte/vkui/dist/components/Root/Root';
 import { useRouteNode } from 'react-router5';
 import { RootRoute } from '../../router';
 
-import FoldersView from '../views/MainView';
-import ArticlesView from '../views/ArticlesView';
 import MainView from '../views/MainView';
-import FolderView from '../views/FolderView';
 
 const styles = makeStyles(() => ({
   root: {
@@ -44,8 +41,7 @@ const App = () => {
   return (
     <>
       <Root activeView={activeView}>
-        <MainView id={RootRoute.MAIN} />
-        <FolderView id={RootRoute.FOLDER} route={route} />
+        <MainView id={RootRoute.MAIN} route={route} />
       </Root>
     </>
   );
