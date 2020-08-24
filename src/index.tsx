@@ -6,6 +6,13 @@ import { AppRoot } from './components/AppRoot';
 import { getOS } from './utils/device';
 import { getInsets } from './utils/dom';
 import config from './config';
+import TagManager from 'react-gtm-module';
+
+const tagManagerArgs = {
+  gtmId: 'GTM-KM2M6J5',
+};
+
+TagManager.initialize(tagManagerArgs);
 
 // Notify native application, initialization done. It will make native
 // application hide loader and display this application.
