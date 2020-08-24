@@ -29,7 +29,7 @@ const FolderView: React.FC<FolderViewProps> = ({ route, ...viewProps }) => {
   const classes = styles({ insets });
 
   return (
-    <View {...viewProps} activePanel="folder.panel">
+    <View {...viewProps} activePanel="folder.panel" onSwipeBack={() => window.history.back()}>
       <Panel className={classes.root} id="folder.panel">
         <FolderPanel route={route} />
       </Panel>

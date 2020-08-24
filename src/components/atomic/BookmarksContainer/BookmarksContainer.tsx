@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { Div, Input, Button } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useActions } from 'src/hooks';
@@ -15,6 +15,7 @@ import EditArticleModal from '../modals/EditArticleModal';
 import { useMutation } from '@apollo/react-hooks';
 import { EditCollectionMutation, editCollectionMutation } from 'src/types/gql/editCollectionMutation';
 import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
+import TransferModal from '../modals/TransferModal';
 
 const TOP_SAFE_AREA = 88;
 const BOTTOM_SAFE_AREA = 105;
@@ -23,7 +24,8 @@ const styles = makeStyles(
   {
     root: {
       paddingTop: (props: { insets: Insets }) => `${TOP_SAFE_AREA + props.insets.top}px`,
-      paddingBottom: (props: { insets: Insets }) => `${BOTTOM_SAFE_AREA + props.insets.bottom}px`,
+      paddingBottom: (props: { insets: Insets }) =>
+        `${BOTTOM_SAFE_AREA + (props.insets.bottom >= 150 ? 0 : props.insets.bottom)}px`,
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
@@ -34,11 +36,12 @@ const styles = makeStyles(
   },
   { classNamePrefix: 'BookmarksContainer' },
 );
-const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: Bookmark[]; rootRoute: RootRoute }> = ({
-  collections,
-  uncollected,
-  rootRoute,
-}) => {
+const BookmarksContainer: React.FC<{
+  collections?: Collection[];
+  uncollected?: Bookmark[];
+  rootRoute: RootRoute;
+  q: string;
+}> = ({ collections, uncollected, rootRoute, q }) => {
   const [editCollectionRemote, { loading }] = useMutation<EditCollectionMutation, EditCollectionMutation.Arguments>(
     editCollectionMutation,
   );
@@ -52,18 +55,18 @@ const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: B
     rootRoute,
     'editArticleModal',
   );
+  const [transferModalOpened, openTransferModal, closeTransferModal] = useQueryFlag(rootRoute, 'transferModal');
 
   const editCollectionAction = useActions(collectionsActions.editCollection);
 
   const insets = useSelector((state) => state.device.currentInsets);
   const classes = styles({ insets });
   const isOverlay = useSelector((state) => state.app.overlay);
-  const sortedCollections = collections;
-  const sortedUncollected = uncollected;
 
   const [currentEditableCollection, setCurrentEditableCollection] = useState<Collection>();
 
   const [currentEditableBookmark, setCurrentEditableBookmark] = useState<Bookmark>();
+  const [plug, setPlug] = useState(false);
 
   const editCollectionSubmit = () => {
     const folderNameLength = currentEditableCollection?.title.trim().length!;
@@ -96,9 +99,14 @@ const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: B
   };
 
   const onOpenEditArticlenModal = useCallback((bookmark: Bookmark) => {
-    setCurrentEditableBookmark({ ...currentEditableBookmark, ...bookmark });
+    setCurrentEditableBookmark(bookmark);
     openEditArticleModal();
   }, []);
+
+  const onOpenTransferModal = (bookmark: Bookmark) => {
+    setCurrentEditableBookmark(bookmark);
+    openTransferModal();
+  };
 
   useEffect(() => {
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
@@ -122,22 +130,70 @@ const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: B
       </Div>
     </Modal>
   );
+
+  const getSortedCollections = useMemo(() => {
+    if (q && collections) {
+      return collections.filter((collection) => {
+        return (
+          collection.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
+          collection.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
+          collection.title.includes(q)
+        );
+      });
+    } else {
+      return collections;
+    }
+  }, [q, collections]);
+
+  const getSortedUncollected = useMemo(() => {
+    if (q && uncollected) {
+      const sortedUncollected = uncollected.filter((bookmark) => {
+        return (
+          bookmark.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
+          bookmark.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
+          bookmark.title.includes(q)
+        );
+      });
+      return sortedUncollected;
+    } else {
+      return uncollected;
+    }
+  }, [q, uncollected]);
+
+  useEffect(() => {
+    if (q && (collections || uncollected)) {
+      if (collections && uncollected) {
+        if (getSortedCollections?.length! < 1 && getSortedUncollected?.length! < 1) {
+          setPlug(true);
+        }
+      } else {
+        if (getSortedCollections?.length! < 1 || getSortedUncollected?.length! < 1) {
+          setPlug(true);
+        }
+      }
+    } else {
+      setPlug(false);
+    }
+  }, [q]);
+
   return (
     <>
       <Overlay enable={isOverlay} blur={true} />
       <Div className={classes.root}>
+        {plug && <div style={{ marginTop: 5 }}>По вашему запросу ничего не найдено</div>}
         {collections && (
           <FoldersContainer
             rootRoute={rootRoute}
             onOpenEditCollectionModal={onOpenEditCollectionModal}
-            collections={sortedCollections || []}
+            collections={getSortedCollections || []}
           />
         )}
         {uncollected && (
           <UncollectedContainer
             rootRoute={rootRoute}
             onOpenEditArticleModal={onOpenEditArticlenModal}
-            uncollected={sortedUncollected || []}
+            uncollected={getSortedUncollected || []}
+            onOpenTransferModal={onOpenTransferModal}
           />
         )}
       </Div>
@@ -149,6 +205,9 @@ const BookmarksContainer: React.FC<{ collections?: Collection[]; uncollected?: B
         rootRoute={rootRoute}
         bookmark={currentEditableBookmark!}
       />
+      {currentEditableBookmark && (
+        <TransferModal opened={transferModalOpened} onClose={closeTransferModal} bookmark={currentEditableBookmark} />
+      )}
     </>
   );
 };

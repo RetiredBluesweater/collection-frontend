@@ -50,8 +50,9 @@ const styles = makeStyles(
 interface BookmarkToolbarProps {
   onDelete?: () => void;
   onEdit?(): void;
+  onTransfer?(): void;
 }
-const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete, onEdit }) => {
+const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete, onEdit, onTransfer }) => {
   const ref = useRef<any>(null);
   const [isOutOfWindow, setIsOutOfWindow] = useState(false);
 
@@ -76,7 +77,7 @@ const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete, onEdit }) =
         <div>Редактировать</div>
         <EditSVG />
       </div>
-      <div className={classes.item}>
+      <div onClick={onTransfer} className={classes.item}>
         <div>Переместить</div>
         <FolderArrowSVG style={{ height: 22 }} />
       </div>

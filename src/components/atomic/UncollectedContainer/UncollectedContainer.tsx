@@ -17,6 +17,7 @@ interface UncollectedContainerProps {
   header?: string;
   uncollected: Bookmark[];
   onOpenEditArticleModal(bookmark: Bookmark): void;
+  onOpenTransferModal(bookmark: Bookmark): void;
   rootRoute: RootRoute;
 }
 const styles = makeStyles({
@@ -52,6 +53,7 @@ const UncollectedContainer: React.FC<UncollectedContainerProps> = ({
   uncollected,
   onOpenEditArticleModal,
   rootRoute,
+  onOpenTransferModal,
   ...props
 }) => {
   const isHeader = !!props.header;
@@ -104,8 +106,8 @@ const UncollectedContainer: React.FC<UncollectedContainerProps> = ({
             <CSSTransition key={item.id} timeout={500} classNames={animationStyles}>
               <BookmarkArticle
                 onDelete={onDeleteHandler}
-                rootRoute={rootRoute}
                 onEdit={() => onOpenEditArticleModal(item)}
+                onTransfer={() => onOpenTransferModal(item)}
                 id={item.id}
                 title={item.title}
                 createdAt={item.createdAt}

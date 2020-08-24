@@ -254,7 +254,7 @@ export declare namespace ChangeBookmarksCollectionParamsInput {
     /**
      * collection ID
      */
-    type collectionId = any;
+    type collectionId = any | null;
 }
 export interface ChangeBookmarksCollectionParamsInput {
     bookmarkId: ChangeBookmarksCollectionParamsInput.bookmarkId;
@@ -322,7 +322,7 @@ export declare namespace Mutation {
     /**
      * Changes Bookmark's Collection
      */
-    type changeBookmarksCollection = boolean;
+    type changeBookmarksCollection = Bookmark;
     namespace changeBookmarksCollection {
         interface Arguments {
             params: ChangeBookmarksCollectionParamsInput;

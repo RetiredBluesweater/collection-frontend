@@ -67,7 +67,7 @@ const styles = makeStyles(
 );
 interface BookmarkArticleProps extends Partial<Bookmark> {
   onEdit(): void;
-  rootRoute: RootRoute;
+  onTransfer(): void;
   onDelete(id: string, collectionId: string): void;
 }
 const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
@@ -77,8 +77,8 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
   createdAt,
   collectionId,
   onEdit,
+  onTransfer,
   onDelete,
-  rootRoute,
 }) => {
   const [contWidth, setContWidth] = useState(0);
   const os = usePlatform();
@@ -165,6 +165,10 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
                   onEdit();
                 }}
                 onDelete={onOpenedDeleteAlert}
+                onTransfer={() => {
+                  onLongtapViewClose();
+                  onTransfer();
+                }}
               />
             </OutsideClickHandler>
           )}

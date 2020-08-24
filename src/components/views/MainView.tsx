@@ -24,7 +24,7 @@ const MainView: React.FC<Omit<ViewProps, 'activePanel'>> = (viewProps) => {
   const classes = styles({ insets });
 
   return (
-    <View {...viewProps} activePanel="main.panel">
+    <View {...viewProps} activePanel="main.panel" onSwipeBack={() => window.history.back()}>
       <Panel className={classes.root} id="main.panel">
         <MainPanel />
       </Panel>

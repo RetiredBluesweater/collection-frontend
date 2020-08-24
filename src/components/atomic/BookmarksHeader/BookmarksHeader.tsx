@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FixedLayout, Search, Div } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import Icon16Dropdown from '@vkontakte/icons/dist/16/dropdown';
 import { getSortName } from './utils';
+import { throttle, debounce } from 'throttle-debounce';
+import useThrottle from 'src/hooks/useThrottle';
 
 const styles = makeStyles(
   {
@@ -37,15 +39,27 @@ export enum SORT_TYPE {
   DATE,
 }
 interface BookmarksHeaderProps {
-  sortType: SORT_TYPE;
+  sortType?: SORT_TYPE;
+  onSearchChange(q: string): void;
 }
-const BookmarksHeader: React.FC<any> = () => {
+const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ onSearchChange }) => {
   const classes = styles();
   const [sortType, setSortType] = useState<SORT_TYPE>(SORT_TYPE.NAME);
 
+  const throttledOnChange = useCallback(
+    throttle(500, (q: string) => {
+      onSearchChange(q);
+    }),
+    [],
+  );
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    throttledOnChange(e.target.value);
+  };
+
   return (
     <FixedLayout vertical="top">
-      <Search className={classes.search} />
+      <Search onChange={onChange} className={classes.search} />
       <Div className={classes.sortBlock}>
         <div className={classes.sortTitle}>{getSortName(sortType)}</div>
         <Icon16Dropdown />

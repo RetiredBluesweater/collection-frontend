@@ -1,3 +1,11 @@
 mutation changeBookmarksCollection($params: ChangeBookmarksCollectionParamsInput!) {
-  changeBookmarksCollection(params: $params)
+  changeBookmarksCollection(params: $params) {
+    id
+    link
+    title
+    description
+    ownerId
+    collectionId
+    createdAt
+  }
 }

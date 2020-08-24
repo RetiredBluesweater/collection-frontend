@@ -159,6 +159,16 @@ export function collectionsReducer(state: CollectionsReducerState = initialState
               : collection,
           ),
         };
+      } else if (!isUncollected && !collectionId) {
+        return {
+          ...state,
+          collections: state.collections.map((collection) =>
+            collection.id === prevCollectionId
+              ? { ...collection, bookmarks: collection.bookmarks.filter((bookmark) => bookmark.id !== id) }
+              : collection,
+          ),
+          uncollected: [...state.uncollected, bookmark],
+        };
       } else {
         return {
           ...state,

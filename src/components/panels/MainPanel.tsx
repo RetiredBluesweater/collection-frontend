@@ -33,6 +33,8 @@ const MainPanel = () => {
 
   const [folderName, setFolderName] = useState('');
 
+  const [search, setSearch] = useState('');
+
   const addFolderSubmitHandler = async () => {
     const folderNameLength = folderName.trim().length;
     if (folderNameLength >= 1 && folderNameLength <= 50) {
@@ -73,11 +75,15 @@ const MainPanel = () => {
       </Div>
     </Modal>
   );
+
+  const onSearchChange = (q: string) => {
+    setSearch(q);
+  };
   return (
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
-      <BookmarksHeader />
-      <BookmarksContainer rootRoute={RootRoute.MAIN} collections={collections} uncollected={uncollected} />
+      <BookmarksHeader onSearchChange={onSearchChange} />
+      <BookmarksContainer q={search} rootRoute={RootRoute.MAIN} collections={collections} uncollected={uncollected} />
       <AddBtn
         modalOpened={addFolderModalOpened || addArticleModalOpened}
         openAddFolderModalHandler={() => {
