@@ -11,6 +11,7 @@ const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack
   const collections = useSelector((state) => state.collections.collections);
   const collection = collections.find((collection) => collection.id === id);
   const [search, setSearch] = useState('');
+  const [searchResultsLength, setSearchResultsLength] = useState(0);
 
   const onSearchChange = (q: string) => {
     setSearch(q);
@@ -22,8 +23,13 @@ const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack
     return (
       <>
         <PanelHeader left={<PanelHeaderBack onClick={goBack} />}>{collection.title}</PanelHeader>
-        <BookmarksHeader onSearchChange={onSearchChange} />
-        <BookmarksContainer q={search} rootRoute={RootRoute.FOLDER} uncollected={collection.bookmarks} />
+        <BookmarksHeader resultsLength={searchResultsLength} onSearchChange={onSearchChange} />
+        <BookmarksContainer
+          onSearchResultsChange={setSearchResultsLength}
+          q={search}
+          rootRoute={RootRoute.FOLDER}
+          uncollected={collection.bookmarks}
+        />
       </>
     );
   }

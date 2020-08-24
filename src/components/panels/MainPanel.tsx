@@ -38,6 +38,8 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
 
   const [search, setSearch] = useState('');
 
+  const [searchResultsLength, setSearchResultsLength] = useState(0);
+
   const addFolderSubmitHandler = async () => {
     const folderNameLength = folderName.trim().length;
     if (folderNameLength >= 1 && folderNameLength <= 50) {
@@ -85,8 +87,9 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
   return (
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
-      <BookmarksHeader onSearchChange={onSearchChange} />
+      <BookmarksHeader resultsLength={searchResultsLength} onSearchChange={onSearchChange} />
       <BookmarksContainer
+        onSearchResultsChange={setSearchResultsLength}
         isSearchAll={true}
         q={search}
         rootRoute={RootRoute.MAIN}

@@ -3,8 +3,9 @@ import { FixedLayout, Search, Div } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import Icon16Dropdown from '@vkontakte/icons/dist/16/dropdown';
 import { getSortName } from './utils';
-import { throttle, debounce } from 'throttle-debounce';
-import useThrottle from 'src/hooks/useThrottle';
+import { throttle } from 'throttle-debounce';
+import { declOfNum } from 'src/utils/math';
+import { usePrevious } from 'src/hooks/usePrevious';
 
 const styles = makeStyles(
   {
@@ -18,7 +19,7 @@ const styles = makeStyles(
       fontSize: 15,
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-between',
       background: 'var(--background_content)',
       '&:active': {
         '& $sortTitle, svg': {
@@ -29,6 +30,15 @@ const styles = makeStyles(
     },
     sortTitle: {
       marginRight: 5,
+    },
+    sortContainer: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    resultsTitle: {
+      transition: 'all 0.3s',
+      color: 'var(--text_primary)',
+      fontSize: 17,
     },
   },
   { classNamePrefix: 'bookmarksHeader' },
@@ -41,11 +51,12 @@ export enum SORT_TYPE {
 interface BookmarksHeaderProps {
   sortType?: SORT_TYPE;
   onSearchChange(q: string): void;
+  resultsLength: number;
 }
-const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ onSearchChange }) => {
+const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ onSearchChange, resultsLength }) => {
   const classes = styles();
   const [sortType, setSortType] = useState<SORT_TYPE>(SORT_TYPE.NAME);
-
+  const prevResultsLength = usePrevious(resultsLength);
   const throttledOnChange = useCallback(
     throttle(500, (q: string) => {
       onSearchChange(q);
@@ -61,8 +72,15 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ onSearchChange }) => 
     <FixedLayout vertical="top">
       <Search onChange={onChange} className={classes.search} />
       <Div className={classes.sortBlock}>
-        <div className={classes.sortTitle}>{getSortName(sortType)}</div>
-        <Icon16Dropdown />
+        <div style={{ opacity: resultsLength > 0 ? 1 : 0 }} className={classes.resultsTitle}>
+          {resultsLength > 0
+            ? `${resultsLength} ${declOfNum(resultsLength, ['результат', 'результата', 'результатов'])}`
+            : `${prevResultsLength}  ${declOfNum(prevResultsLength || 0, ['результат', 'результата', 'результатов'])}`}
+        </div>
+        <div className={classes.sortContainer}>
+          <div className={classes.sortTitle}>{getSortName(sortType)}</div>
+          <Icon16Dropdown />
+        </div>
       </Div>
     </FixedLayout>
   );

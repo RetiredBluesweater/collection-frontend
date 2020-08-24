@@ -41,9 +41,10 @@ const BookmarksContainer: React.FC<{
   uncollected?: Bookmark[];
   rootRoute: RootRoute;
   q: string;
+  onSearchResultsChange(resultLength: number): void;
   onFolderOpen?(folderId: string): void;
   isSearchAll?: boolean;
-}> = ({ collections, uncollected, rootRoute, q, onFolderOpen, isSearchAll = false }) => {
+}> = ({ collections, uncollected, rootRoute, q, onFolderOpen, isSearchAll = false, onSearchResultsChange }) => {
   const [editCollectionRemote, { loading }] = useMutation<EditCollectionMutation, EditCollectionMutation.Arguments>(
     editCollectionMutation,
   );
@@ -134,8 +135,11 @@ const BookmarksContainer: React.FC<{
   );
 
   const allBookmarks = useMemo(() => {
-    const result = collections?.map((collection) => Object.assign({}, ...collection.bookmarks));
-    return result;
+    if (collections) {
+      const filteredCollections = collections.filter((collection) => collection.bookmarks.length > 0);
+      const result = filteredCollections?.map((collection) => Object.assign({}, ...collection.bookmarks));
+      return result[0]?.title ? result : null;
+    } else return null;
   }, [collections]);
 
   const getSortedCollections = useMemo(() => {
@@ -154,14 +158,12 @@ const BookmarksContainer: React.FC<{
 
   const getSortedUncollected = useMemo(() => {
     let definedUncollected: Bookmark[] | undefined = uncollected;
-    if (isSearchAll && allBookmarks && allBookmarks[0]?.title && !uncollected) {
+    if (isSearchAll && allBookmarks && !uncollected) {
       definedUncollected = allBookmarks;
-    } else if (isSearchAll && allBookmarks && allBookmarks[0]?.title && uncollected) {
+    } else if (isSearchAll && allBookmarks && uncollected) {
       definedUncollected = [...allBookmarks, ...uncollected];
     }
     if (q && definedUncollected && definedUncollected.length > 0) {
-      console.log(definedUncollected);
-
       const sortedUncollected = definedUncollected.filter((bookmark) => {
         return (
           bookmark.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
@@ -176,6 +178,16 @@ const BookmarksContainer: React.FC<{
   }, [q, uncollected]);
 
   useEffect(() => {
+    if (q && getSortedCollections && getSortedUncollected) {
+      onSearchResultsChange(getSortedCollections.length + getSortedUncollected.length);
+    } else if (q && getSortedCollections && !getSortedUncollected) {
+      onSearchResultsChange(getSortedCollections.length);
+    } else if (q && !getSortedCollections && getSortedUncollected) {
+      onSearchResultsChange(getSortedUncollected.length);
+    } else {
+      onSearchResultsChange(0);
+    }
+
     if (q && (collections || uncollected)) {
       if (collections && uncollected) {
         if (getSortedCollections?.length! < 1 && getSortedUncollected?.length! < 1) {
