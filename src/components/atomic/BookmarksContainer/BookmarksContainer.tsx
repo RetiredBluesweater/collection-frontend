@@ -144,7 +144,7 @@ const BookmarksContainer: React.FC<{
         return (
           collection.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
           collection.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
-          collection.title.includes(q)
+          collection.title.toLowerCase().includes(q.toLowerCase())
         );
       });
     } else {
@@ -153,11 +153,14 @@ const BookmarksContainer: React.FC<{
   }, [q, collections]);
 
   const getSortedUncollected = useMemo(() => {
-    if (q && uncollected) {
-      let definedUncollected: Bookmark[] = uncollected;
-      if (isSearchAll && allBookmarks) {
-        definedUncollected = [...allBookmarks, ...uncollected];
-      }
+    let definedUncollected: Bookmark[] | undefined = uncollected;
+    if (isSearchAll && allBookmarks && allBookmarks[0]?.title) {
+      definedUncollected = allBookmarks;
+    } else if (isSearchAll && allBookmarks && allBookmarks[0]?.title && uncollected) {
+      definedUncollected = [...allBookmarks, ...uncollected];
+    }
+    if (q && definedUncollected && definedUncollected.length > 0) {
+      console.log(definedUncollected);
 
       const sortedUncollected = definedUncollected.filter((bookmark) => {
         return (
