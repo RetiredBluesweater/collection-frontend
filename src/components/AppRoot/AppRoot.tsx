@@ -201,15 +201,15 @@ export class AppRoot extends PureComponent<Props, AppRootState> {
 
     try {
       // Performing all async operations and getting data to launch application
-      const [storage, vkUser, register, collections] = await Promise.all([
+      const [storage, vkUser, register] = await Promise.all([
         getStorageKeys<StorageValuesMap>(...Object.values(StorageFieldEnum)),
         vkBridge.send('VKWebAppGetUserInfo'),
         this.apolloClient.mutate<RegisterMutation, RegisterMutation.Arguments>({ mutation: registerMutation }),
-        this.apolloClient.query<
-          CollectionsWithUncollectedBookmarksQuery,
-          CollectionsWithUncollectedBookmarksQuery.Arguments
-        >({ query: collectionsWithUncollectedBookmarksQuery }),
       ]);
+      const collections = await this.apolloClient.query<
+        CollectionsWithUncollectedBookmarksQuery,
+        CollectionsWithUncollectedBookmarksQuery.Arguments
+      >({ query: collectionsWithUncollectedBookmarksQuery });
 
       // Create history depending on initial data
       this.store = createReduxStore({
