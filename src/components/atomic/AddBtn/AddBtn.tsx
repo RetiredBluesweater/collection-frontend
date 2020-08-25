@@ -9,11 +9,17 @@ import AddBtnToolBar from '../AddBtnToolBar';
 
 const styles = makeStyles({
   fixedLayout: {
+    left: 'unset',
+    right: 0,
     zIndex: 11,
+    width: 'unset',
     '& .FixedLayout__in': {
       display: 'flex',
       justifyContent: 'flex-end',
       margin: '0 25px 25px 0',
+    },
+    '& .FixedLayout--bottom': {
+      width: 'unset !important',
     },
   },
   btn: {

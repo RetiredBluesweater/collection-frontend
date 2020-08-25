@@ -49,12 +49,14 @@ interface FoldersContainerProps {
   onOpenEditCollectionModal(collection: Collection): void;
   rootRoute: RootRoute;
   onFolderOpen(folderId: string): void;
+  isAnimations?: boolean;
 }
 const FoldersContainer: React.FC<FoldersContainerProps> = ({
   collections,
   onOpenEditCollectionModal,
   rootRoute,
   onFolderOpen,
+  isAnimations,
   ...props
 }) => {
   const isHeader = !!props.header;
@@ -106,23 +108,38 @@ const FoldersContainer: React.FC<FoldersContainerProps> = ({
 
   return (
     <div className={classes.root}>
-      <TransitionGroup>
-        {collections.map((collection) => {
-          return (
-            <CSSTransition key={collection.id} timeout={500} classNames={animationStyles}>
-              <Folder
-                onDelete={onDeleteHandler}
-                rootRoute={rootRoute}
-                onEdit={() => onOpenEditCollectionModal(collection)}
-                onClick={() => onFolderOpen(collection.id)}
-                bookmarks={collection.bookmarks}
-                title={collection.title}
-                id={collection.id}
-              />
-            </CSSTransition>
-          );
-        })}
-      </TransitionGroup>
+      {isAnimations ? (
+        <TransitionGroup>
+          {collections.map((collection) => {
+            return (
+              <CSSTransition key={collection.id} timeout={500} classNames={animationStyles}>
+                <Folder
+                  onDelete={onDeleteHandler}
+                  rootRoute={rootRoute}
+                  onEdit={() => onOpenEditCollectionModal(collection)}
+                  onClick={() => onFolderOpen(collection.id)}
+                  bookmarks={collection.bookmarks}
+                  title={collection.title}
+                  id={collection.id}
+                />
+              </CSSTransition>
+            );
+          })}
+        </TransitionGroup>
+      ) : (
+        collections.map((collection) => (
+          <Folder
+            key={collection.id}
+            onDelete={onDeleteHandler}
+            rootRoute={rootRoute}
+            onEdit={() => onOpenEditCollectionModal(collection)}
+            onClick={() => onFolderOpen(collection.id)}
+            bookmarks={collection.bookmarks}
+            title={collection.title}
+            id={collection.id}
+          />
+        ))
+      )}
       <DeleteCollectionAlert
         show={deleteCollectionAlertOpened}
         onClose={closeDeleteCollectionAlert}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { FixedLayout, Search, Div } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import Icon16Dropdown from '@vkontakte/icons/dist/16/dropdown';
@@ -6,6 +6,13 @@ import { getSortName } from './utils';
 import { throttle } from 'throttle-debounce';
 import { declOfNum } from 'src/utils/math';
 import { usePrevious } from 'src/hooks/usePrevious';
+import { useSelector, useActions } from 'src/hooks';
+import { OS } from 'src/types';
+import useQueryFlag from 'src/hooks/useQueryFlag';
+import { RootRoute } from 'src/router';
+import { ActionSheet } from '@overrided-vkui';
+import SortPanel from '../actionSheets/SortPanel';
+import { appActions } from 'src/redux/reducers/app';
 
 const styles = makeStyles(
   {
@@ -45,17 +52,23 @@ const styles = makeStyles(
 );
 
 export enum SORT_TYPE {
-  NAME,
-  DATE,
+  DATE_NEW,
+  DATE_OLD,
 }
 interface BookmarksHeaderProps {
   sortType?: SORT_TYPE;
   onSearchChange(q: string): void;
   resultsLength: number;
+  rootRoute: RootRoute;
 }
-const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ onSearchChange, resultsLength }) => {
+const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ onSearchChange, resultsLength, rootRoute }) => {
   const classes = styles();
-  const [sortType, setSortType] = useState<SORT_TYPE>(SORT_TYPE.NAME);
+
+  const [actionSheetOpened, openActionSheet, closeActionSheet] = useQueryFlag(rootRoute, 'actionSheet');
+
+  const sortType = useSelector((state) => state.app.sortType);
+  /*   const setActionSheet = useActions(appActions.setActionSheet); */
+
   const prevResultsLength = usePrevious(resultsLength);
   const throttledOnChange = useCallback(
     throttle(500, (q: string) => {
@@ -68,21 +81,36 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ onSearchChange, resul
     throttledOnChange(e.target.value);
   };
 
+  /*   useEffect(() => {
+    if (actionSheetOpened) {
+      setActionSheet({ status: actionSheetOpened, onClose: closeActionSheet });
+    } else {
+      setActionSheet({ status: actionSheetOpened, onClose: closeActionSheet });
+    }
+  }, [actionSheetOpened, openActionSheet, closeActionSheet, rootRoute, setActionSheet]); */
+
   return (
-    <FixedLayout vertical="top">
-      <Search onChange={onChange} className={classes.search} />
-      <Div className={classes.sortBlock}>
-        <div style={{ opacity: resultsLength > 0 ? 1 : 0 }} className={classes.resultsTitle}>
-          {resultsLength > 0
-            ? `${resultsLength} ${declOfNum(resultsLength, ['результат', 'результата', 'результатов'])}`
-            : `${prevResultsLength}  ${declOfNum(prevResultsLength || 0, ['результат', 'результата', 'результатов'])}`}
-        </div>
-        <div className={classes.sortContainer}>
-          <div className={classes.sortTitle}>{getSortName(sortType)}</div>
-          <Icon16Dropdown />
-        </div>
-      </Div>
-    </FixedLayout>
+    <>
+      <FixedLayout vertical="top">
+        <Search onChange={onChange} className={classes.search} />
+        <Div className={classes.sortBlock}>
+          <div style={{ opacity: resultsLength > 0 ? 1 : 0 }} className={classes.resultsTitle}>
+            {resultsLength > 0
+              ? `${resultsLength} ${declOfNum(resultsLength, ['результат', 'результата', 'результатов'])}`
+              : `${prevResultsLength || 0}  ${declOfNum(prevResultsLength || 0, [
+                  'результат',
+                  'результата',
+                  'результатов',
+                ])}`}
+          </div>
+          <div onClick={openActionSheet} className={classes.sortContainer}>
+            <div className={classes.sortTitle}>{getSortName(sortType)}</div>
+            <Icon16Dropdown />
+          </div>
+        </Div>
+      </FixedLayout>
+      <SortPanel onClose={closeActionSheet} open={actionSheetOpened} />
+    </>
   );
 };
 

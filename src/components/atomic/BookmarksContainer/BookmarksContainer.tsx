@@ -16,6 +16,7 @@ import { useMutation } from '@apollo/react-hooks';
 import { EditCollectionMutation, editCollectionMutation } from 'src/types/gql/editCollectionMutation';
 import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
 import TransferModal from '../modals/TransferModal';
+import { sortCollections, sortBookmarks } from './utils';
 
 const TOP_SAFE_AREA = 88;
 const BOTTOM_SAFE_AREA = 105;
@@ -42,9 +43,19 @@ const BookmarksContainer: React.FC<{
   rootRoute: RootRoute;
   q: string;
   onSearchResultsChange(resultLength: number): void;
+  plugContent: any;
   onFolderOpen?(folderId: string): void;
   isSearchAll?: boolean;
-}> = ({ collections, uncollected, rootRoute, q, onFolderOpen, isSearchAll = false, onSearchResultsChange }) => {
+}> = ({
+  collections,
+  uncollected,
+  rootRoute,
+  q,
+  onFolderOpen,
+  isSearchAll = false,
+  onSearchResultsChange,
+  ...props
+}) => {
   const [editCollectionRemote, { loading }] = useMutation<EditCollectionMutation, EditCollectionMutation.Arguments>(
     editCollectionMutation,
   );
@@ -66,6 +77,7 @@ const BookmarksContainer: React.FC<{
   const insets = useSelector((state) => state.device.currentInsets);
   const classes = styles({ insets });
   const isOverlay = useSelector((state) => state.app.overlay);
+  const sortType = useSelector((state) => state.app.sortType);
 
   const [currentEditableCollection, setCurrentEditableCollection] = useState<Collection>();
 
@@ -145,17 +157,20 @@ const BookmarksContainer: React.FC<{
 
   const getSortedCollections = useMemo(() => {
     if (q && collections) {
-      return collections.filter((collection) => {
-        return (
-          collection.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
-          collection.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
-          collection.title.toLowerCase().includes(q.toLowerCase())
-        );
-      });
-    } else {
-      return collections;
-    }
-  }, [q, collections]);
+      return sortCollections(
+        sortType,
+        collections.filter((collection) => {
+          return (
+            collection.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
+            collection.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
+            collection.title.toLowerCase().includes(q.toLowerCase())
+          );
+        }),
+      );
+    } else if (collections) {
+      return sortCollections(sortType, collections);
+    } else return [];
+  }, [q, collections, sortType]);
 
   const getSortedUncollected = useMemo(() => {
     let definedUncollected: Bookmark[] | undefined = uncollected;
@@ -165,20 +180,24 @@ const BookmarksContainer: React.FC<{
       definedUncollected = [...allBookmarks, ...uncollected];
     }
     if (q && definedUncollected && definedUncollected.length > 0) {
-      const sortedUncollected = definedUncollected.filter((bookmark) => {
-        return (
-          bookmark.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
-          bookmark.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
-          bookmark.title.toLowerCase().includes(q.toLowerCase())
-        );
-      });
-      return sortedUncollected;
+      const filteredBookmarks = sortBookmarks(
+        sortType,
+        definedUncollected.filter((bookmark) => {
+          return (
+            bookmark.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
+            bookmark.title.toLowerCase().substring(0, q.trim().length) === q.toLowerCase().trim() ||
+            bookmark.title.toLowerCase().includes(q.toLowerCase())
+          );
+        }),
+      );
+      return sortBookmarks(sortType, filteredBookmarks);
     } else {
-      return uncollected;
+      return sortBookmarks(sortType, uncollected!);
     }
-  }, [q, uncollected]);
+  }, [q, uncollected, sortType]);
 
   useEffect(() => {
+    //Отображаем кол-во результатов
     if (q && getSortedCollections && getSortedUncollected) {
       onSearchResultsChange(getSortedCollections.length + getSortedUncollected.length);
     } else if (q && getSortedCollections && !getSortedUncollected) {
@@ -188,10 +207,16 @@ const BookmarksContainer: React.FC<{
     } else {
       onSearchResultsChange(0);
     }
-
+    //Ставим заглушку если нужно
     if (q && (collections || uncollected)) {
       if (collections && uncollected) {
         if (getSortedCollections?.length! < 1 && getSortedUncollected?.length! < 1) {
+          setPlug(true);
+        } else {
+          setPlug(false);
+        }
+      } else if (collections || uncollected) {
+        if (getSortedCollections?.length! < 1 || getSortedUncollected?.length! < 1) {
           setPlug(true);
         } else {
           setPlug(false);
@@ -207,21 +232,23 @@ const BookmarksContainer: React.FC<{
     <>
       <Overlay enable={isOverlay} blur={true} />
       <Div className={classes.root}>
-        {plug && <div style={{ marginTop: 5 }}>По вашему запросу ничего не найдено</div>}
-        {collections && onFolderOpen && (
-          <FoldersContainer
-            onFolderOpen={onFolderOpen}
-            rootRoute={rootRoute}
-            onOpenEditCollectionModal={onOpenEditCollectionModal}
-            collections={getSortedCollections || []}
-          />
-        )}
+        {plug && props.plugContent}
         {uncollected && (
           <UncollectedContainer
+            isAnimations={!!!q}
             rootRoute={rootRoute}
             onOpenEditArticleModal={onOpenEditArticlenModal}
             uncollected={getSortedUncollected || []}
             onOpenTransferModal={onOpenTransferModal}
+          />
+        )}
+        {collections && onFolderOpen && (
+          <FoldersContainer
+            isAnimations={!!!q}
+            onFolderOpen={onFolderOpen}
+            rootRoute={rootRoute}
+            onOpenEditCollectionModal={onOpenEditCollectionModal}
+            collections={getSortedCollections || []}
           />
         )}
       </Div>

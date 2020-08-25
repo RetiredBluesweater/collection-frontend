@@ -19,6 +19,7 @@ interface UncollectedContainerProps {
   onOpenEditArticleModal(bookmark: Bookmark): void;
   onOpenTransferModal(bookmark: Bookmark): void;
   rootRoute: RootRoute;
+  isAnimations?: boolean;
 }
 const styles = makeStyles({
   root: {
@@ -54,6 +55,7 @@ const UncollectedContainer: React.FC<UncollectedContainerProps> = ({
   onOpenEditArticleModal,
   rootRoute,
   onOpenTransferModal,
+  isAnimations,
   ...props
 }) => {
   const isHeader = !!props.header;
@@ -100,24 +102,40 @@ const UncollectedContainer: React.FC<UncollectedContainerProps> = ({
 
   return (
     <div className={classes.root}>
-      <TransitionGroup>
-        {uncollected.map((item) => {
-          return (
-            <CSSTransition key={item.id} timeout={500} classNames={animationStyles}>
-              <BookmarkArticle
-                onDelete={onDeleteHandler}
-                onEdit={() => onOpenEditArticleModal(item)}
-                onTransfer={() => onOpenTransferModal(item)}
-                id={item.id}
-                title={item.title}
-                createdAt={item.createdAt}
-                collectionId={item.collectionId}
-                link={item.link}
-              />
-            </CSSTransition>
-          );
-        })}
-      </TransitionGroup>
+      {isAnimations ? (
+        <TransitionGroup>
+          {uncollected.map((item) => {
+            return (
+              <CSSTransition key={item.id} timeout={500} classNames={animationStyles}>
+                <BookmarkArticle
+                  onDelete={onDeleteHandler}
+                  onEdit={() => onOpenEditArticleModal(item)}
+                  onTransfer={() => onOpenTransferModal(item)}
+                  id={item.id}
+                  title={item.title}
+                  createdAt={item.createdAt}
+                  collectionId={item.collectionId}
+                  link={item.link}
+                />
+              </CSSTransition>
+            );
+          })}
+        </TransitionGroup>
+      ) : (
+        uncollected.map((item) => (
+          <BookmarkArticle
+            key={item.id}
+            onDelete={onDeleteHandler}
+            onEdit={() => onOpenEditArticleModal(item)}
+            onTransfer={() => onOpenTransferModal(item)}
+            id={item.id}
+            title={item.title}
+            createdAt={item.createdAt}
+            collectionId={item.collectionId}
+            link={item.link}
+          />
+        ))
+      )}
       <DeleteBookmarkAlert
         onClose={closeDeleteBookmarkAlert}
         show={deleteBookmarkAlertOpened}

@@ -87,8 +87,9 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
   return (
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
-      <BookmarksHeader resultsLength={searchResultsLength} onSearchChange={onSearchChange} />
+      <BookmarksHeader rootRoute={RootRoute.MAIN} resultsLength={searchResultsLength} onSearchChange={onSearchChange} />
       <BookmarksContainer
+        plugContent={<div style={{ marginTop: 5 }}>По вашему запросу ничего не найдено</div>}
         onSearchResultsChange={setSearchResultsLength}
         isSearchAll={true}
         q={search}

@@ -8,6 +8,7 @@ import { useRouteNode } from 'react-router5';
 import { RootRoute } from '../../router';
 
 import MainView from '../views/MainView';
+import SortPanel from '../atomic/actionSheets/SortPanel';
 
 const styles = makeStyles(() => ({
   root: {
@@ -24,6 +25,7 @@ const styles = makeStyles(() => ({
 const App = () => {
   const classes = styles();
   document.body.className = classes.root;
+  const actionSheet = useSelector((state) => state.app.actionSheet);
 
   const onTouchStart = useDoubleTapHandler();
 
