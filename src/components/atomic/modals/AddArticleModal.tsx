@@ -28,7 +28,8 @@ import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
 interface AddArticleModalProps {
   opened: boolean;
   onClose: () => void;
-  collections: Collection[];
+  collectionId?: string;
+  collections?: Collection[];
 }
 
 export interface AddArticleModalStateProps {
@@ -37,7 +38,7 @@ export interface AddArticleModalStateProps {
   collectionId: string | null;
 }
 
-const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, collections }) => {
+const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, collections, collectionId }) => {
   const openSnackbar = useSnackbar();
   const [foldersModalOpened, openFoldersModal, closeFoldersModal] = useQueryFlag(RootRoute.MAIN, 'foldersModal');
   const createBookmarkAction = useActions(collectionsActions.createBookmark);
@@ -56,7 +57,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
   );
 
   const getCollectionName = () => {
-    if (article.collectionId) {
+    if (article.collectionId && collections) {
       return collections.find((collection) => collection.id === article.collectionId)?.title;
     } else if (article.collectionId == null) {
       return 'Без папки';
@@ -83,7 +84,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
     createBookmarkRemote({
       variables: {
         params: {
-          collectionId: article.collectionId,
+          collectionId: collectionId || article.collectionId,
           link: article.link,
           title: article.title,
         },
@@ -131,17 +132,18 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
           >
             Без папки
           </Cell>
-          {collections.map((collection, idx) => {
-            return (
-              <Cell
-                onClick={() => addToCollectionHandler(collection.id)}
-                asideContent={article.collectionId === collection.id ? <Icon24CheckCircleOn /> : null}
-                key={idx}
-              >
-                {collection.title}
-              </Cell>
-            );
-          })}
+          {collections &&
+            collections.map((collection, idx) => {
+              return (
+                <Cell
+                  onClick={() => addToCollectionHandler(collection.id)}
+                  asideContent={article.collectionId === collection.id ? <Icon24CheckCircleOn /> : null}
+                  key={idx}
+                >
+                  {collection.title}
+                </Cell>
+              );
+            })}
         </List>
       </Group>
     </Modal>
@@ -172,14 +174,16 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
               placeholder="Вставьте ссылку"
             />
           </FormLayoutGroup>
-          <FormLayoutGroup
-            onClick={() => {
-              openFoldersModal();
-            }}
-            top="Папка для сохранения"
-          >
-            <SelectMimicry placeholder="Укажите папку">{getCollectionName()}</SelectMimicry>
-          </FormLayoutGroup>
+          {collections && (
+            <FormLayoutGroup
+              onClick={() => {
+                openFoldersModal();
+              }}
+              top="Папка для сохранения"
+            >
+              <SelectMimicry placeholder="Укажите папку">{getCollectionName()}</SelectMimicry>
+            </FormLayoutGroup>
+          )}
           <FormLayoutGroup
             status={validationFields.title.status}
             bottom={validationFields.title.status === 'error' && validationFields.title.text}

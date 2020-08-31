@@ -12,6 +12,7 @@ import { useActions, useSelector } from 'src/hooks';
 import { useMutation } from '@apollo/react-hooks';
 import { CreateCollectionMutation, createCollectionMutation } from 'src/types/gql/createCollectionMutation';
 import ErrorRetrySnackbar from '../atomic/snackbars/ErrorRetrySnackbar';
+import Plug from '../atomic/Plug';
 
 interface MainPanelProps {
   onFolderOpen(folderId: string): void;
@@ -88,16 +89,28 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
       <BookmarksHeader rootRoute={RootRoute.MAIN} resultsLength={searchResultsLength} onSearchChange={onSearchChange} />
-      <BookmarksContainer
-        plugContent={<div style={{ marginTop: 5 }}>По вашему запросу ничего не найдено</div>}
-        onSearchResultsChange={setSearchResultsLength}
-        isSearchAll={true}
-        q={search}
-        rootRoute={RootRoute.MAIN}
-        collections={collections}
-        uncollected={uncollected}
-        onFolderOpen={onFolderOpen}
-      />
+      {collections.length < 1 && uncollected.length < 1 ? (
+        <Plug
+          text={
+            <div>
+              Здесь будут отображаться статьи, <br /> которые вы добавите
+            </div>
+          }
+          btnText="Добавить статью"
+          onClick={openAddArticleModal}
+        />
+      ) : (
+        <BookmarksContainer
+          plugContent={<div style={{ marginTop: 5 }}>По вашему запросу ничего не найдено</div>}
+          onSearchResultsChange={setSearchResultsLength}
+          isSearchAll={true}
+          q={search}
+          rootRoute={RootRoute.MAIN}
+          collections={collections}
+          uncollected={uncollected}
+          onFolderOpen={onFolderOpen}
+        />
+      )}
       <AddBtn
         modalOpened={addFolderModalOpened || addArticleModalOpened}
         openAddFolderModalHandler={() => {

@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
-import { PanelHeader, PanelHeaderBack, Div, Button } from '@vkontakte/vkui';
+import React, { useState, useEffect } from 'react';
+import { PanelHeader, PanelHeaderBack, Div, Button, Input } from '@vkontakte/vkui';
 import { State } from 'router5';
 import { useSelector } from 'src/hooks';
 import BookmarksHeader from '../atomic/BookmarksHeader/BookmarksHeader';
 import BookmarksContainer from '../atomic/BookmarksHeader';
 import { RootRoute } from 'src/router';
 import { makeStyles } from '@material-ui/styles';
+import AddBtn from '../atomic/AddBtn';
+import { Modal } from '@overrided-vkui';
+import useQueryFlag from 'src/hooks/useQueryFlag';
+import AddArticleModal from '../atomic/modals/AddArticleModal';
+import Plug from '../atomic/Plug';
 
 const styles = makeStyles({
   panelHeader: {
@@ -28,17 +33,32 @@ const TOP_SAFE_AREA = 88;
 
 const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack }) => {
   const classes = styles();
+  const [addBookmarkModalOpened, openAddBookmarkModal, closeAddBookmarkModal] = useQueryFlag(
+    RootRoute.FOLDER,
+    'addBookmark',
+  );
+
   const { id } = route.params;
   const collections = useSelector((state) => state.collections.collections);
   const collection = collections.find((collection) => collection.id === id);
   const [search, setSearch] = useState('');
   const [searchResultsLength, setSearchResultsLength] = useState(0);
+  const [bookmarkForm, setBookmarkForm] = useState<{ link: string; title: string }>({ link: '', title: '' });
 
   const onSearchChange = (q: string) => {
     setSearch(q);
   };
+  const [plug, setPlug] = useState(false);
 
-  if (!collection) {
+  const onAddBookmarkHandler = () => {};
+
+  useEffect(() => {
+    if (!collection) {
+      setPlug(true);
+    }
+  }, []);
+
+  if (plug) {
     return (
       <>
         <PanelHeader left={<PanelHeaderBack onClick={goBack} />}></PanelHeader>
@@ -50,7 +70,33 @@ const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack
         </Div>
       </>
     );
-  } else {
+  } else if (collection && collections && collections[0].bookmarks.length < 1) {
+    return (
+      <>
+        <PanelHeader className={classes.panelHeader} left={<PanelHeaderBack onClick={goBack} />}>
+          {collection.title}
+        </PanelHeader>
+        <BookmarksHeader
+          rootRoute={RootRoute.FOLDER}
+          resultsLength={searchResultsLength}
+          onSearchChange={onSearchChange}
+        />
+        <Plug
+          text={
+            <div>
+              Здесь будут отображаться статьи, <br /> которые вы добавите
+            </div>
+          }
+          btnText="Добавить статью"
+          onClick={openAddBookmarkModal}
+        />
+        <AddBtn openAddArticleModalHandler={openAddBookmarkModal} modalOpened={false} />
+        {addBookmarkModalOpened && (
+          <AddArticleModal onClose={closeAddBookmarkModal} opened={addBookmarkModalOpened} collectionId={id} />
+        )}
+      </>
+    );
+  } else if (collection) {
     return (
       <>
         <PanelHeader className={classes.panelHeader} left={<PanelHeaderBack onClick={goBack} />}>
@@ -71,11 +117,15 @@ const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack
           onSearchResultsChange={setSearchResultsLength}
           q={search}
           rootRoute={RootRoute.FOLDER}
-          uncollected={collection.bookmarks}
+          uncollected={collection.bookmarks!}
         />
+        <AddBtn openAddArticleModalHandler={openAddBookmarkModal} modalOpened={false} />
+        {addBookmarkModalOpened && (
+          <AddArticleModal onClose={closeAddBookmarkModal} opened={addBookmarkModalOpened} collectionId={id} />
+        )}
       </>
     );
-  }
+  } else return null;
 };
 
 export default React.memo(FolderPanel);

@@ -39,14 +39,18 @@ const styles = makeStyles({
 });
 
 const AddBtn: React.FC<{
-  openAddFolderModalHandler: () => void;
-  openAddArticleModalHandler: () => void;
   modalOpened: boolean;
+  openAddFolderModalHandler?: () => void;
+  openAddArticleModalHandler?: () => void;
 }> = ({ openAddFolderModalHandler, openAddArticleModalHandler, modalOpened }) => {
   const classes = styles();
   const [openMode, setOpenMode] = useState(false);
 
   const onBtnClickHandler = () => {
+    if (!openAddFolderModalHandler && openAddArticleModalHandler) {
+      openAddArticleModalHandler();
+      return;
+    }
     setOpenMode(!openMode);
   };
 
@@ -62,17 +66,27 @@ const AddBtn: React.FC<{
       <FixedLayout className={classes.fixedLayout} vertical="bottom">
         <OutsideClickHandler onOutsideClick={() => setOpenMode(false)}>
           <PlusBtnSVG onClick={onBtnClickHandler} className={clsx(classes.btn, openMode && classes.btn__openMode)} />
-          <AddBtnToolBar
-            openAddArticleModalHandler={() => {
-              setOpenMode(false);
-              openAddArticleModalHandler();
-            }}
-            openAddFolderModalHandler={() => {
-              setOpenMode(false);
-              openAddFolderModalHandler();
-            }}
-            enable={openMode}
-          />
+          {openAddFolderModalHandler && (
+            <AddBtnToolBar
+              openAddArticleModalHandler={
+                openAddArticleModalHandler
+                  ? () => {
+                      setOpenMode(false);
+                      openAddArticleModalHandler();
+                    }
+                  : undefined
+              }
+              openAddFolderModalHandler={
+                openAddFolderModalHandler
+                  ? () => {
+                      setOpenMode(false);
+                      openAddFolderModalHandler();
+                    }
+                  : undefined
+              }
+              enable={openMode}
+            />
+          )}
         </OutsideClickHandler>
       </FixedLayout>
     </>

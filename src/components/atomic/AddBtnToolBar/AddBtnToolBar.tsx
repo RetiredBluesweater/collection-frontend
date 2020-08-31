@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { usePrevious } from 'src/hooks/usePrevious';
@@ -75,20 +75,24 @@ const styles = makeStyles(
 
 const AddBtnToolBar: React.FC<{
   enable: boolean;
-  openAddFolderModalHandler: () => void;
-  openAddArticleModalHandler: () => void;
+  openAddFolderModalHandler?: () => void;
+  openAddArticleModalHandler?: () => void;
 }> = ({ enable, openAddFolderModalHandler, openAddArticleModalHandler }) => {
   const classes = styles();
   const prevStatus = usePrevious(enable);
 
   return (
     <div className={clsx(classes.root, enable && classes.enable, prevStatus && !enable && classes.disable)}>
-      <button onClick={openAddFolderModalHandler} className={classes.btn}>
-        Добавить папку
-      </button>
-      <button onClick={openAddArticleModalHandler} className={classes.btn}>
-        Добавить статью
-      </button>
+      {openAddFolderModalHandler && (
+        <button onClick={openAddFolderModalHandler} className={classes.btn}>
+          Добавить папку
+        </button>
+      )}
+      {openAddArticleModalHandler && (
+        <button onClick={openAddArticleModalHandler} className={classes.btn}>
+          Добавить статью
+        </button>
+      )}
     </div>
   );
 };

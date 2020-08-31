@@ -1,11 +1,8 @@
-import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { ReactComponent as EditSVG } from '../../../assets/edit.svg';
 import { ReactComponent as FolderArrowSVG } from '../../../assets/folder_arrow.svg';
 import { ReactComponent as DeleteSVG } from '../../../assets/deleteSVG.svg';
-import { ReactComponent as SelectSVG } from '../../../assets/select.svg';
-import { ReactComponent as ShareSVG } from '../../../assets/share.svg';
-import clsx from 'clsx';
 
 const styles = makeStyles(
   {
@@ -32,11 +29,11 @@ const styles = makeStyles(
       '&:active': {
         background: '#a5a5a58f',
       },
-      '&:first-child': {
+      '&:first-child:active': {
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
       },
-      '&:last-child': {
+      '&:last-child:active': {
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
       },
@@ -71,26 +68,32 @@ const BookmarkToolbar: React.FC<BookmarkToolbarProps> = ({ onDelete, onEdit, onT
 
   return (
     <div ref={ref} className={classes.root}>
-      <div onClick={onEdit} className={classes.item}>
-        <div>Редактировать</div>
-        <EditSVG />
-      </div>
-      <div onClick={onTransfer} className={classes.item}>
-        <div>Переместить</div>
-        <FolderArrowSVG style={{ height: 22 }} />
-      </div>
-      <div className={classes.item}>
+      {onEdit && (
+        <div onClick={onEdit} className={classes.item}>
+          <div>Редактировать</div>
+          <EditSVG />
+        </div>
+      )}{' '}
+      {onTransfer && (
+        <div onClick={onTransfer} className={classes.item}>
+          <div>Переместить</div>
+          <FolderArrowSVG style={{ height: 22 }} />
+        </div>
+      )}
+      {/* <div className={classes.item}>
         <div>Выбрать</div>
         <SelectSVG />
       </div>
       <div className={classes.item}>
         <div>Поделиться</div>
         <ShareSVG />
-      </div>
-      <div onClick={onDelete} className={classes.item}>
-        <div style={{ color: '#E64646' }}>Удалить</div>
-        <DeleteSVG />
-      </div>
+      </div> */}
+      {onDelete && (
+        <div onClick={onDelete} className={classes.item}>
+          <div style={{ color: '#E64646' }}>Удалить</div>
+          <DeleteSVG />
+        </div>
+      )}
     </div>
   );
 };

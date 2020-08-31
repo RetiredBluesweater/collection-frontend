@@ -66,8 +66,12 @@ const SwipeView: React.FC<SwipeViewProps> = ({ children, leftContent, swipable }
   return (
     <OutsideClickHandler onOutsideClick={rightSwipedHandler}>
       <Swipeable style={{ position: 'relative' }} onSwipedLeft={leftSwipedHandler} onSwipedRight={rightSwipedHandler}>
-        {React.Children.map(children, (element: any) => {
-          return React.cloneElement(element, { ref: domElement });
+        {React.Children.map(children, (element: any, idx) => {
+          if (idx === 0) {
+            return React.cloneElement(element, { ref: domElement });
+          } else if (element) {
+            return React.cloneElement(element);
+          }
         })}
         <div
           ref={viewCell}

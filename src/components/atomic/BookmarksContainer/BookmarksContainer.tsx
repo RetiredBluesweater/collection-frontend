@@ -17,6 +17,7 @@ import { EditCollectionMutation, editCollectionMutation } from 'src/types/gql/ed
 import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
 import TransferModal from '../modals/TransferModal';
 import { sortCollections, sortBookmarks } from './utils';
+import Plug from '../Plug';
 
 const TOP_SAFE_AREA = 88;
 const BOTTOM_SAFE_AREA = 105;
@@ -147,11 +148,16 @@ const BookmarksContainer: React.FC<{
     </Modal>
   );
 
-  const allBookmarks = useMemo(() => {
+  const allBookmarks: any = useMemo(() => {
     if (collections) {
       const filteredCollections = collections.filter((collection) => collection.bookmarks.length > 0);
-      const result = filteredCollections?.map((collection) => Object.assign({}, ...collection.bookmarks));
-      return result[0]?.title ? result : null;
+      const result: Bookmark[] = [];
+      filteredCollections?.forEach((collection) => {
+        collection.bookmarks.forEach((item) => {
+          result.push(item);
+        });
+      });
+      return result ? result : null;
     } else return null;
   }, [collections]);
 

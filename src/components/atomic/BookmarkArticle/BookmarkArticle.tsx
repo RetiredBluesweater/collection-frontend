@@ -30,6 +30,7 @@ const styles = makeStyles(
       height: 55,
       marginTop: 15,
       transition: 'transform .6s var(--ios-easing)',
+      textDecoration: 'none',
     },
     active: {
       '&:active': {
@@ -118,8 +119,7 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
   };
 
   const onClick = () => {
-    console.log('click is triggered');
-    window.open(link, '_blank');
+    /*   window.open(link, '_blank'); */
   };
 
   const defaultOptions = {
@@ -142,6 +142,16 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
     const localDate = date.toLocaleDateString();
     return localDate;
   };
+
+  const getFormatedLink = () => {
+    let newLink = link;
+    if (newLink?.includes('http')) {
+      newLink = link;
+    } else {
+      newLink = 'http://'.concat(newLink!);
+    }
+    return newLink;
+  };
   return (
     <>
       <SwipeView
@@ -153,31 +163,34 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
           </>
         }
       >
-        <div
+        <a
           {...events()}
           className={clsx(classes.root, 'longtap-target', !isToolbar && classes.active, isToolbar && 'longtap--active')}
+          href={getFormatedLink()}
+          target="_blank"
+          rel="noreferrer"
         >
-          {isToolbar && (
-            <OutsideClickHandler onOutsideClick={onLongtapViewClose}>
-              <BookmarkToolbar
-                onEdit={() => {
-                  onLongtapViewClose();
-                  onEdit();
-                }}
-                onDelete={onOpenedDeleteAlert}
-                onTransfer={() => {
-                  onLongtapViewClose();
-                  onTransfer();
-                }}
-              />
-            </OutsideClickHandler>
-          )}
           <ArticleSVG className={classes.articleSvg} />
           <div>
             <h3 className={classes.title}>{title}</h3>
             <span className={classes.subTitle}>{formatedDate(createdAt!)}</span>
           </div>
-        </div>
+        </a>
+        {isToolbar && (
+          <OutsideClickHandler onOutsideClick={onLongtapViewClose}>
+            <BookmarkToolbar
+              onEdit={() => {
+                onLongtapViewClose();
+                onEdit();
+              }}
+              onDelete={onOpenedDeleteAlert}
+              onTransfer={() => {
+                onLongtapViewClose();
+                onTransfer();
+              }}
+            />
+          </OutsideClickHandler>
+        )}
       </SwipeView>
     </>
   );
