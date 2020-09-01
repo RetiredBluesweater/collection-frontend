@@ -65,7 +65,7 @@ const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack
         </Div>
       </>
     );
-  } else if (collection && collections && collections[0].bookmarks.length < 1) {
+  } else if (collection && collection.bookmarks.length < 1) {
     return (
       <>
         <PanelHeader className={classes.panelHeader} left={<PanelHeaderBack onClick={goBack} />}>
