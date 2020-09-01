@@ -196,7 +196,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
               placeholder="Укажите название"
             />
           </FormLayoutGroup>
-          <Button size="xl" onClick={submitHandler}>
+          <Button disabled={loading} size="xl" onClick={submitHandler}>
             {loading ? 'Добавляю...' : 'Добавить'}
           </Button>
         </FormLayout>

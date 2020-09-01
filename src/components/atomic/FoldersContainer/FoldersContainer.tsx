@@ -1,9 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import Folder from '../Folder';
 import { makeStyles } from '@material-ui/styles';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { Collection } from 'src/types';
-import { useRouter } from 'react-router5';
 import { RootRoute } from 'src/router';
 import DeleteCollectionAlert from '../alerts/DeleteCollectionAlert';
 import useQueryFlag from 'src/hooks/useQueryFlag';

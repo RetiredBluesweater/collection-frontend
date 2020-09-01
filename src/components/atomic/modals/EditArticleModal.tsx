@@ -200,7 +200,7 @@ const EditArticleModal: React.FC<EditArticleModalProps> = ({ opened, onClose, bo
               placeholder="Укажите название"
             />
           </FormLayoutGroup>
-          <Button size="xl" onClick={submitHandler}>
+          <Button disabled={loading} size="xl" onClick={submitHandler}>
             {loading ? 'Сохраняю...' : 'Сохранить'}
           </Button>
         </FormLayout>

@@ -2,15 +2,15 @@ import React, { useEffect, useRef, useState, ReactElement, ReactNode } from 'rea
 import { Swipeable } from 'react-swipeable';
 import { OS, usePlatform } from '@vkontakte/vkui';
 import OutsideClickHandler from 'react-outside-click-handler';
-import { makeStyles } from '@material-ui/styles';
 
 interface SwipeViewProps {
   leftContent: ReactElement;
   children: ReactNode;
   swipable: boolean;
+  onSwiped?(status: boolean): void;
 }
 
-const SwipeView: React.FC<SwipeViewProps> = ({ children, leftContent, swipable }) => {
+const SwipeView: React.FC<SwipeViewProps> = ({ children, leftContent, swipable, onSwiped }) => {
   const os = usePlatform();
   const cellMarginRight = os === OS.ANDROID ? 16 : 12;
   const activeClass = 'swipeView--active';
@@ -21,6 +21,7 @@ const SwipeView: React.FC<SwipeViewProps> = ({ children, leftContent, swipable }
     if (!swipable) {
       return;
     }
+    onSwiped && onSwiped(true);
     const cellWidth = viewCell.current.offsetWidth;
 
     const nodesArr = Array.from(document.getElementsByClassName(`${activeClass}`)) as HTMLElement[];
@@ -39,6 +40,7 @@ const SwipeView: React.FC<SwipeViewProps> = ({ children, leftContent, swipable }
   };
 
   const rightSwipedHandler = () => {
+    onSwiped && onSwiped(false);
     domElement.current.style.transform = `translateX(${0}px)`;
     viewCell.current.style.transform = `translateX(${0}px)`;
   };

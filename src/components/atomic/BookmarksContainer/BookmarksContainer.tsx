@@ -30,7 +30,6 @@ const styles = makeStyles(
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      /* minHeight: (props: { insets: Insets }) => `calc(100vh - ${252 + props.insets.bottom + props.insets.top}px)`, */
       minHeight: (props: { insets: Insets }) =>
         `calc(var(--vh, 1vh) * 100 - ${250 + props.insets.bottom + props.insets.top}px)`,
     },
@@ -140,7 +139,11 @@ const BookmarksContainer: React.FC<{
           style={{ marginBottom: 12 }}
           placeholder="Придумайте название"
         />
-        <Button onClick={editCollectionSubmit} disabled={currentEditableCollection?.title.trim().length! < 1} size="xl">
+        <Button
+          onClick={editCollectionSubmit}
+          disabled={currentEditableCollection?.title.trim().length! < 1 || loading}
+          size="xl"
+        >
           {loading ? 'Сохраняю...' : 'Сохранить'}
         </Button>
       </Div>

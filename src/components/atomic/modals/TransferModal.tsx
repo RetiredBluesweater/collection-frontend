@@ -119,7 +119,11 @@ const TransferModal: React.FC<TransferModalProps> = ({ opened, onClose, bookmark
           </List>
           <FixedLayout className={classes.fixedLayout} vertical="bottom">
             <Div className={classes.button}>
-              <Button disabled={prevCollectionId === newCollectionId} onClick={onTransferHandler} size={'xl'}>
+              <Button
+                disabled={prevCollectionId === newCollectionId || loading}
+                onClick={onTransferHandler}
+                size={'xl'}
+              >
                 {loading ? 'Перемещаю...' : 'Переместить'}
               </Button>
             </Div>

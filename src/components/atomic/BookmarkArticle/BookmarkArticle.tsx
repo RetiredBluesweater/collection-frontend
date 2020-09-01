@@ -86,6 +86,7 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
   const setOverylayAction = useActions(appActions.setOverlay);
 
   const [isToolbar, setIsToolbar] = useState(false);
+  const [isAction, setIsAction] = useState(false);
 
   const classes = styles({ contWidth });
 
@@ -127,7 +128,7 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
   const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
 
   const events = () => {
-    const value = isToolbar ? {} : longPressEvent;
+    const value = isToolbar || isAction ? {} : longPressEvent;
     return value;
   };
 
@@ -151,9 +152,19 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
     }
     return newLink;
   };
+
+  const onSwiped = (status: boolean) => {
+    if (status) {
+      setIsAction(true);
+    } else {
+      setIsAction(false);
+    }
+  };
+
   return (
     <>
       <SwipeView
+        onSwiped={onSwiped}
         swipable={!isToolbar}
         leftContent={
           <>

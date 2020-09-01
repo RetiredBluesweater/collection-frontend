@@ -83,6 +83,7 @@ const Folder: React.FC<FolderProps> = ({ onClick, onEdit, onDelete, rootRoute, .
   const setOverylayAction = useActions(appActions.setOverlay);
 
   const [isToolbar, setIsToolbar] = useState(false);
+  const [isAction, setIsAction] = useState(false);
 
   const classes = styles({ contWidth });
   const os = usePlatform();
@@ -121,17 +122,27 @@ const Folder: React.FC<FolderProps> = ({ onClick, onEdit, onDelete, rootRoute, .
   const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
 
   const events = () => {
-    const value = isToolbar ? {} : longPressEvent;
+    const value = isToolbar || isAction ? {} : longPressEvent;
     return value;
   };
 
   const onOpenedDeleteAlert = () => {
+    setIsAction(true);
     onLongtapViewClose();
     onDelete(id);
+  };
+
+  const onSwiped = (status: boolean) => {
+    if (status) {
+      setIsAction(true);
+    } else {
+      setIsAction(false);
+    }
   };
   return (
     <>
       <SwipeView
+        onSwiped={onSwiped}
         swipable={!isToolbar}
         leftContent={
           <>

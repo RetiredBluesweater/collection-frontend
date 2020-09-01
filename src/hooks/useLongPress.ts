@@ -46,9 +46,10 @@ export const useLongPress = (
         event.target.closest('.longtap-target').classList.add('longtap--active');
 
         onLongPress(event);
-        if (window.navigator?.vibrate) {
+
+        /*   if (window.navigator?.vibrate) {
           window.navigator.vibrate(200);
-        }
+        } */
 
         /* setLongPressTriggered(true); */
       }, delay);

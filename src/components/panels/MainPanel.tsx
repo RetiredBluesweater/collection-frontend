@@ -75,7 +75,7 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
           style={{ marginBottom: 12 }}
           placeholder="Придумайте название"
         />
-        <Button onClick={addFolderSubmitHandler} disabled={folderName.trim().length < 1} size="xl">
+        <Button onClick={addFolderSubmitHandler} disabled={folderName.trim().length < 1 || loading} size="xl">
           {loading ? 'Сохраняю...' : 'Сохранить'}
         </Button>
       </Div>
