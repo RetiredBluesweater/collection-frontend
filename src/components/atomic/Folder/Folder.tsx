@@ -115,10 +115,6 @@ const Folder: React.FC<FolderProps> = ({ onClick, onEdit, onDelete, rootRoute, .
     }
   };
 
-  /*   const onClick = () => {
-    console.log('click is triggered');
-  }; */
-
   const defaultOptions = {
     delay: 500,
   };

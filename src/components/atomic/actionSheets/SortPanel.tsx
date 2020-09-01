@@ -1,9 +1,7 @@
 import { makeStyles } from '@material-ui/styles';
 import ActionSheet from '@vkontakte/vkui/dist/components/ActionSheet/ActionSheet';
 import ActionSheetItem from '@vkontakte/vkui/dist/components/ActionSheetItem/ActionSheetItem';
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-
-import { tapticNotification } from '../../../utils/taptic';
+import React from 'react';
 import { useSelector, useActions } from 'src/hooks';
 import { OS } from 'src/types';
 import { appActions } from 'src/redux/reducers/app';

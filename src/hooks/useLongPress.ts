@@ -24,7 +24,6 @@ export const useLongPress = (
         startX: event.touches && event.touches[0].clientX,
         startY: event.touches && event.touches[0].clientY,
       };
-      console.log(event.target);
 
       event.target.addEventListener('touchmove', getCoordinates);
 
@@ -68,7 +67,7 @@ export const useLongPress = (
       }
 
       timeout.current && clearTimeout(timeout.current);
-      console.log(shouldTriggerClick, longPressTriggered);
+
       shouldTriggerClick && !longPressTriggered && onClick();
       event.target.removeEventListener('touchmove', getCoordinates);
 

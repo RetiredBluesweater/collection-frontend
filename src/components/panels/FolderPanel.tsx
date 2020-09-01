@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PanelHeader, PanelHeaderBack, Div, Button, Input } from '@vkontakte/vkui';
+import { PanelHeader, PanelHeaderBack, Div, Button } from '@vkontakte/vkui';
 import { State } from 'router5';
 import { useSelector } from 'src/hooks';
 import BookmarksHeader from '../atomic/BookmarksHeader/BookmarksHeader';
@@ -7,7 +7,6 @@ import BookmarksContainer from '../atomic/BookmarksHeader';
 import { RootRoute } from 'src/router';
 import { makeStyles } from '@material-ui/styles';
 import AddBtn from '../atomic/AddBtn';
-import { Modal } from '@overrided-vkui';
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import AddArticleModal from '../atomic/modals/AddArticleModal';
 import Plug from '../atomic/Plug';
@@ -29,7 +28,6 @@ const styles = makeStyles({
     },
   },
 });
-const TOP_SAFE_AREA = 88;
 
 const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack }) => {
   const classes = styles();
@@ -43,14 +41,11 @@ const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack
   const collection = collections.find((collection) => collection.id === id);
   const [search, setSearch] = useState('');
   const [searchResultsLength, setSearchResultsLength] = useState(0);
-  const [bookmarkForm, setBookmarkForm] = useState<{ link: string; title: string }>({ link: '', title: '' });
 
   const onSearchChange = (q: string) => {
     setSearch(q);
   };
   const [plug, setPlug] = useState(false);
-
-  const onAddBookmarkHandler = () => {};
 
   useEffect(() => {
     if (!collection) {

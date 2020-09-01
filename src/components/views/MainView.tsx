@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import View, { ViewProps } from '@vkontakte/vkui/dist/components/View/View';
 import { Panel } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
@@ -9,6 +9,7 @@ import FolderPanel from '../panels/FolderPanel';
 import { State } from 'router5';
 import { useRouteNode } from 'react-router5';
 import { RootRoute } from 'src/router';
+import OnboardingPanel from '../panels/OnboardingPanel';
 
 const styles = makeStyles(
   {
@@ -52,6 +53,16 @@ const MainView: React.FC<MainViewProps> = ({ route: rootRoute, ...viewProps }) =
 
   return (
     <View {...viewProps} activePanel={activePanel} onSwipeBack={goHistoryBack} history={history}>
+      <Panel className={classes.root} id={RootRoute.ONBOARDING}>
+        <OnboardingPanel
+          onStartApp={() => {
+            const newHistory = history.filter((value) => value !== RootRoute.ONBOARDING);
+            newHistory.push(RootRoute.MAIN);
+            setHistory(newHistory);
+            router.navigate(RootRoute.MAIN);
+          }}
+        />
+      </Panel>
       <Panel className={classes.root} id={RootRoute.MAIN}>
         <MainPanel onFolderOpen={openFolder} />
       </Panel>

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import Folder from '../Folder';
 import { makeStyles } from '@material-ui/styles';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { Collection, Bookmark } from 'src/types';
+import { Collection } from 'src/types';
 import { useRouter } from 'react-router5';
 import { RootRoute } from 'src/router';
 import DeleteCollectionAlert from '../alerts/DeleteCollectionAlert';
@@ -63,10 +63,9 @@ const FoldersContainer: React.FC<FoldersContainerProps> = ({
   const classes = styles({ isHeader });
   const animationStyles = useTransitionStyles();
 
-  const [deleteCollectionRemote, { loading }] = useMutation<
-    DeleteCollectionMutation,
-    DeleteCollectionMutation.Arguments
-  >(deleteCollectionMutation);
+  const [deleteCollectionRemote] = useMutation<DeleteCollectionMutation, DeleteCollectionMutation.Arguments>(
+    deleteCollectionMutation,
+  );
   const openSnackbar = useSnackbar();
   const deleteCollectionAction = useActions(collectionsActions.deleteCollection);
 
@@ -75,15 +74,6 @@ const FoldersContainer: React.FC<FoldersContainerProps> = ({
     'deleteCollectionAlert',
   );
   const [collectionId, setCollectionId] = useState('');
-
-  const router = useRouter();
-
-  const openFolder = useCallback(
-    (collectionId: string) => {
-      router.navigate(RootRoute.FOLDER, { id: collectionId });
-    },
-    [router],
-  );
 
   const onDeleteHandler = (id: string) => {
     setCollectionId(id);

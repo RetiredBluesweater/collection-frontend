@@ -17,7 +17,6 @@ import { EditCollectionMutation, editCollectionMutation } from 'src/types/gql/ed
 import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
 import TransferModal from '../modals/TransferModal';
 import { sortCollections, sortBookmarks } from './utils';
-import Plug from '../Plug';
 
 const TOP_SAFE_AREA = 88;
 const BOTTOM_SAFE_AREA = 105;

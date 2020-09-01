@@ -13,7 +13,7 @@ import {
 } from '@vkontakte/vkui';
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
-import {  Bookmark } from 'src/types';
+import { Bookmark } from 'src/types';
 import Icon24CheckCircleOn from '@vkontakte/icons/dist/24/check_circle_on';
 import { useActions, useSelector } from 'src/hooks';
 import { collectionsActions } from 'src/redux/reducers/collections';
@@ -141,7 +141,6 @@ const EditArticleModal: React.FC<EditArticleModalProps> = ({ opened, onClose, bo
             return (
               <Cell
                 onClick={() => {
-                  console.log('hehe');
                   addToCollectionHandler(collection.id);
                 }}
                 asideContent={article.collectionId === collection.id ? <Icon24CheckCircleOn /> : null}

@@ -1,3 +1,4 @@
+// eslint-disable react-hooks/exhaustive-deps
 import React, { useLayoutEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import SwipeView from '../SwipeView';
@@ -13,7 +14,6 @@ import clsx from 'clsx';
 import BookmarkToolbar from '../BookmarkToolbar';
 import OutsideClickHandler from 'react-outside-click-handler';
 import { Bookmark } from 'src/types';
-import { RootRoute } from 'src/router';
 
 const styles = makeStyles(
   (theme: Theme) => ({
@@ -97,7 +97,6 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
   }, []);
 
   const onLongPress = () => {
-    console.log('longpress is triggered');
     const activeNode = document.getElementsByClassName('longtap--active')[0] as HTMLElement;
     if (activeNode) {
       activeNode.style.position = 'relative';
@@ -168,7 +167,7 @@ const BookmarkArticle: React.FC<BookmarkArticleProps> = ({
           className={clsx(classes.root, 'longtap-target', !isToolbar && classes.active, isToolbar && 'longtap--active')}
           href={getFormatedLink()}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
           <ArticleSVG className={classes.articleSvg} />
           <div>

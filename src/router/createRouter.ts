@@ -5,9 +5,10 @@ import browserPlugin from 'router5-plugin-browser';
 export enum RootRoute {
   MAIN = 'main',
   FOLDER = 'main.folder',
+  ONBOARDING = 'main.onboarding',
 }
 
-export const createRouter = (defaultRoute: string, invite: boolean) => {
+export const createRouter = (defaultRoute: string) => {
   const router = createRouter5(
     [
       {
@@ -17,6 +18,10 @@ export const createRouter = (defaultRoute: string, invite: boolean) => {
       {
         name: RootRoute.FOLDER,
         path: '/folder/:id',
+      },
+      {
+        name: RootRoute.ONBOARDING,
+        path: '/onboarding',
       },
     ],
     { defaultRoute, queryParamsMode: 'loose' },
@@ -35,10 +40,8 @@ export const createRouter = (defaultRoute: string, invite: boolean) => {
   // fixes desktop safary first back navigation problem
   const route = router.getState();
 
-  console.log(route);
-
   if (route) {
-    router.navigate(route.name, { ...route.params, fix: 'safari', invite }, { force: true });
+    router.navigate(defaultRoute, { ...route.params, fix: 'safari' }, { force: true });
   }
 
   return router;

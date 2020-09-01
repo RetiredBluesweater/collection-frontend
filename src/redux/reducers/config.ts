@@ -4,6 +4,7 @@ export interface ConfigReducerState extends Config {}
 
 const initialState: ConfigReducerState = {
   gqlHttpUrl: '',
+  groupId: 0,
 };
 
 /**

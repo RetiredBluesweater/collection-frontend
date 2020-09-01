@@ -10,20 +10,7 @@ interface SwipeViewProps {
   swipable: boolean;
 }
 
-const styles = makeStyles(
-  {
-    root: {
-      '&:active': {
-        opacity: 0.7,
-      },
-    },
-    cellContainer: {},
-  },
-  { classNamePrefix: 'swipeView' },
-);
-
 const SwipeView: React.FC<SwipeViewProps> = ({ children, leftContent, swipable }) => {
-  const classes = styles();
   const os = usePlatform();
   const cellMarginRight = os === OS.ANDROID ? 16 : 12;
   const activeClass = 'swipeView--active';

@@ -215,6 +215,7 @@ export class AppRoot extends PureComponent<Props, AppRootState> {
       this.store = createReduxStore({
         ...this.store.getState(),
         vkUser,
+        storage,
         collections: { collections: collections.data.collections, uncollected: collections.data.uncollectedBookmarks },
       });
 

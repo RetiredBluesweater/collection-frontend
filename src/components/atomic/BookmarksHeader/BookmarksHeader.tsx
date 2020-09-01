@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { FixedLayout, Search, Div } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import Icon16Dropdown from '@vkontakte/icons/dist/16/dropdown';
@@ -6,13 +6,12 @@ import { getSortName } from './utils';
 import { throttle } from 'throttle-debounce';
 import { declOfNum } from 'src/utils/math';
 import { usePrevious } from 'src/hooks/usePrevious';
-import { useSelector, useActions } from 'src/hooks';
-import { OS } from 'src/types';
+import { useSelector } from 'src/hooks';
+
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
-import { ActionSheet } from '@overrided-vkui';
+
 import SortPanel from '../actionSheets/SortPanel';
-import { appActions } from 'src/redux/reducers/app';
 
 const styles = makeStyles(
   {

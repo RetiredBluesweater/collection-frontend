@@ -17,6 +17,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/interface-name-prefix': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
+    '@typescript-eslint/exhaustive-deps': 'off',
     'react-hooks/exhaustive-deps': 0,
   },
   settings: {

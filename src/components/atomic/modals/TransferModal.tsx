@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, useSnackbar } from '@overrided-vkui';
 import { Group, List, Cell, Button, Div, FixedLayout } from '@vkontakte/vkui';
 import Icon24CheckCircleOn from '@vkontakte/icons/dist/24/check_circle_on';
@@ -37,11 +37,19 @@ const TransferModal: React.FC<TransferModalProps> = ({ opened, onClose, bookmark
   const insets = useSelector((state) => state.device.currentInsets);
   const classes = styles({ insets });
   const collections = useSelector((state) => state.collections.collections);
-  const prevCollectionId = collections.find((collection) =>
-    collection.bookmarks.find((item) => item.id === bookmark.id),
-  )?.id;
+  const prevCollectionId = useMemo(
+    () => collections.find((collection) => collection.bookmarks.find((item) => item.id === bookmark.id))?.id,
+    [bookmark],
+  );
 
   const [newCollectionId, setNewCollectionId] = useState<string | null>(prevCollectionId);
+
+  useEffect(() => {
+    if (newCollectionId !== prevCollectionId) {
+      setNewCollectionId(prevCollectionId);
+    }
+  }, [bookmark]);
+
   const openSnackbar = useSnackbar();
   const transferAction = useActions(collectionsActions.transfer);
   const [transferActionRemote, { loading }] = useMutation<
