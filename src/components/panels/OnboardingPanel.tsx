@@ -12,8 +12,14 @@ import { useStorageValue } from 'src/hooks';
 import { StorageFieldEnum } from 'src/types';
 import config from 'src/config';
 import vkBridge from '@vkontakte/vk-bridge';
+import clsx from 'clsx';
+import useWindowSizes from 'src/hooks/useWindowSizes';
 
-const useStyles = makeStyles<Theme, Insets>((theme) => ({
+interface StylesProps {
+  insets: Insets;
+  innerWidth: number;
+}
+const useStyles = makeStyles<Theme, StylesProps>((theme) => ({
   root: {
     position: 'fixed',
     top: 0,
@@ -25,10 +31,10 @@ const useStyles = makeStyles<Theme, Insets>((theme) => ({
     justifyContent: 'space-between',
     flexDirection: 'column',
     padding: 0,
-    background: 'var(--background_content)',
+    background: 'white',
   },
   logoContainer: {
-    paddingTop: (props) => props.top + 59,
+    paddingTop: (props) => props.insets.top + 59,
   },
   logo: {
     display: 'table',
@@ -54,20 +60,25 @@ const useStyles = makeStyles<Theme, Insets>((theme) => ({
   imageContainer: {
     flex: '1 0 0',
     padding: '20px 0 0px',
+    display: 'flex',
+    alignItems: 'flex-end',
+    position: 'relative',
+    overflow: 'hidden',
   },
   image: {
-    height: '100%',
+    height: '78%',
     background: 'no-repeat center',
-    backgroundSize: 'contain',
-    width: 305,
+    width: '80%',
     display: 'table',
-    margin: 'auto',
+    margin: '0 auto',
     backgroundPosition: 'bottom',
+    backgroundSize: 'contain',
+    zIndex: 1,
   },
   bottom: {
     flex: '0 0 auto',
     backgroundColor: 'white',
-    padding: (props) => `30px 21px ${props.bottom + 40}px`,
+    padding: (props) => `30px 21px ${props.insets.bottom + 40}px`,
     boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.07);',
     display: 'flex',
     flexDirection: 'column',
@@ -79,9 +90,9 @@ const useStyles = makeStyles<Theme, Insets>((theme) => ({
   title: {
     fontSize: 30,
     lineHeight: '31px',
-    fontWeight: 600,
+    fontWeight: 700,
     margin: 0,
-    color: '#4D4D4D',
+    color: '#000000',
     textAlign: 'center',
     marginBottom: '-30px',
   },
@@ -90,7 +101,7 @@ const useStyles = makeStyles<Theme, Insets>((theme) => ({
     letterSpacing: -0.24,
     fontSize: 20,
     lineHeight: '22px',
-    color: '#A8A7A7',
+    color: 'rgba(0, 0, 0, 0.8);',
     margin: 0,
     marginTop: 15,
     fontWeight: theme.typography.fontWeightRegular,
@@ -99,7 +110,7 @@ const useStyles = makeStyles<Theme, Insets>((theme) => ({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: (props) => props.bottom + 15,
+    bottom: (props) => props.insets.bottom + 15,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -146,6 +157,44 @@ const useStyles = makeStyles<Theme, Insets>((theme) => ({
       opacity: 0.7,
     },
   },
+  image3: {
+    backgroundPosition: 'right bottom',
+  },
+  line1: {
+    backgroundColor: '#3F8AE0',
+    height: 100,
+    width: (props) => `${props.innerWidth + 100}px`,
+    right: 0,
+    left: 0,
+    top: '78%',
+    transform: 'rotate(-13.49deg) translateY(-50%)',
+    position: 'absolute',
+    overflow: 'hidden',
+    transformOrigin: 'left',
+  },
+  line2: {
+    backgroundColor: '#3F8AE0',
+    height: 100,
+    width: '300px',
+    right: 0,
+    top: '14%',
+    left: '-39%',
+    transform: 'rotate(27.91deg) translateY(-50%)',
+    position: 'absolute',
+    overflow: 'hidden',
+    transformOrigin: 'left',
+  },
+  line3: {
+    backgroundColor: '#3F8AE0',
+    height: 151,
+    width: '300px',
+    right: '-27%',
+    bottom: '-10%',
+    transform: 'rotate(-18.56deg) translateY(-50%)',
+    position: 'absolute',
+    overflow: 'hidden',
+    transformOrigin: 'left',
+  },
 }));
 
 /**
@@ -153,8 +202,9 @@ const useStyles = makeStyles<Theme, Insets>((theme) => ({
  * @type {React.NamedExoticComponent<object>}
  */
 const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) => {
+  const { innerWidth } = useWindowSizes();
   const insets = useInsets();
-  const mc = useStyles(insets);
+  const mc = useStyles({ insets, innerWidth });
   const [slide, setSlide] = useState(0);
   const setCompleted = useStorageValue(StorageFieldEnum.OnboardingCompleted)[1];
 
@@ -172,7 +222,7 @@ const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) 
   };
 
   const onNextClick = useCallback(() => {
-    if (slide === 1) {
+    if (slide === 0) {
       askForGroupMessages();
       return;
     }
@@ -194,7 +244,13 @@ const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) 
           return (
             <div className={mc.slide} key={idx}>
               <div className={mc.imageContainer}>
-                <div className={mc.image} style={{ backgroundImage: `url(${image})` }} />
+                <div
+                  className={clsx(mc.image, idx === 1 && mc.image3)}
+                  style={{ backgroundImage: `url(${image})` }}
+                ></div>
+                {idx === 0 && <div className={mc.line1}></div>}
+                {idx === 1 && <div className={mc.line2}></div>}
+                {idx === 2 && <div className={mc.line3}></div>}
               </div>
               <div className={mc.bottom}>
                 <p className={mc.title}>{title}</p>
@@ -206,7 +262,11 @@ const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) 
                     height: 45,
                   }}
                 >
-                  <Button size="xl" onClick={() => (idx === arr.length - 1 ? onStartClick() : onNextClick())}>
+                  <Button
+                    style={{ backgroundColor: '#3F8AE0', color: 'white' }}
+                    size="m"
+                    onClick={() => (idx === arr.length - 1 ? onStartClick() : onNextClick())}
+                  >
                     {buttonText}
                   </Button>
                 </div>
