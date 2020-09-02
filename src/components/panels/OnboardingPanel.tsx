@@ -160,6 +160,13 @@ const useStyles = makeStyles<Theme, StylesProps>((theme) => ({
   image3: {
     backgroundPosition: 'right bottom',
   },
+  imageCont1: {
+    alignItems: 'center',
+  },
+  image1: {
+    backgroundPosition: 'center',
+    width: '40%',
+  },
   line1: {
     backgroundColor: '#3F8AE0',
     height: 100,
@@ -222,7 +229,7 @@ const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) 
   };
 
   const onNextClick = useCallback(() => {
-    if (slide === 0) {
+    if (slide === 1) {
       askForGroupMessages();
       return;
     }
@@ -243,14 +250,14 @@ const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) 
 
           return (
             <div className={mc.slide} key={idx}>
-              <div className={mc.imageContainer}>
+              <div className={clsx(mc.imageContainer, idx === 0 && mc.imageCont1)}>
                 <div
-                  className={clsx(mc.image, idx === 1 && mc.image3)}
+                  className={clsx(mc.image, idx === 2 && mc.image3, idx === 0 && mc.image1)}
                   style={{ backgroundImage: `url(${image})` }}
                 ></div>
-                {idx === 0 && <div className={mc.line1}></div>}
-                {idx === 1 && <div className={mc.line2}></div>}
-                {idx === 2 && <div className={mc.line3}></div>}
+                {idx === 1 && <div className={mc.line1}></div>}
+                {idx === 2 && <div className={mc.line2}></div>}
+                {idx === 3 && <div className={mc.line3}></div>}
               </div>
               <div className={mc.bottom}>
                 <p className={mc.title}>{title}</p>
