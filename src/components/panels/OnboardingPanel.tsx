@@ -1,5 +1,4 @@
 import React, { memo, useCallback, useState } from 'react';
-import { useMutation } from '@apollo/react-hooks';
 import c from 'classnames';
 import makeStyles from '@material-ui/styles/makeStyles';
 
@@ -10,11 +9,7 @@ import { onboardingSlides } from './utils/slides';
 import { Theme } from 'src/theme';
 import { useInsets, Button } from '@vkontakte/vkui';
 import { useStorageValue } from 'src/hooks';
-import {
-  registerMutation,
-  RegisterMutation,
-  StorageFieldEnum,
-} from 'src/types';
+import { StorageFieldEnum } from 'src/types';
 import config from 'src/config';
 import vkBridge from '@vkontakte/vk-bridge';
 import clsx from 'clsx';
@@ -24,7 +19,6 @@ interface StylesProps {
   insets: Insets;
   innerWidth: number;
 }
-
 const useStyles = makeStyles<Theme, StylesProps>((theme) => ({
   root: {
     position: 'fixed',
@@ -220,7 +214,6 @@ const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) 
   const mc = useStyles({ insets, innerWidth });
   const [slide, setSlide] = useState(0);
   const setCompleted = useStorageValue(StorageFieldEnum.OnboardingCompleted)[1];
-  const [registerRemote] = useMutation<RegisterMutation, RegisterMutation.Arguments>(registerMutation);
 
   const askForGroupMessages = () => {
     vkBridge
@@ -238,11 +231,6 @@ const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) 
   const onNextClick = useCallback(() => {
     if (slide === 1) {
       askForGroupMessages();
-      return;
-    }
-
-    if (slide === 3) {
-      registerRemote();
       return;
     }
 
