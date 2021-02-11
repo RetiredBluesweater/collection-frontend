@@ -14,6 +14,7 @@ import Plug from '../atomic/Plug';
 const styles = makeStyles({
   panelHeader: {
     '& .PanelHeader__content': {
+      fontSize: '20px',
       paddingRight: '91px !important',
       display: 'unset !important',
     },

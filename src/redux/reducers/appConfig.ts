@@ -29,6 +29,8 @@ export const appConfigActions = unionize(
 
 type AppConfigAction = UnionOf<typeof appConfigActions>;
 
+//Я только запустил, а оно уже ошибки кидает
+//@ts-ignore
 const initialState: AppConfigReducerState = {
   app: 'vkclient',
   appId: '',

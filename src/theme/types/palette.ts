@@ -27,6 +27,10 @@ export interface Palette {
   statusBar: {
     default: StatusBarStyle;
   };
+  onboarding: {
+    backgroundColor: string;
+    borderColor: string;
+  };
   itemShadow: {
     bookmarkArticle: string;
   };
