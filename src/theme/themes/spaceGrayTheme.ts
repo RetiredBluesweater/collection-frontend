@@ -17,6 +17,10 @@ export const spaceGrayTheme: Theme = {
         style: 'light',
       },
     },
+    onboarding: {
+      backgroundColor: '#0e0e0e',
+      borderColor: '#1c1c1d',
+    },
     header: {
       background: 'var(--header_background)',
       color: 'var(--header_text)',

@@ -16,6 +16,10 @@ export const brightLightTheme: Theme = {
         style: 'dark',
       },
     },
+    onboarding: {
+      backgroundColor: 'white',
+      borderColor: '#EEEEEE',
+    },
     header: {
       background: '#3F8AE0',
       color: 'white',
