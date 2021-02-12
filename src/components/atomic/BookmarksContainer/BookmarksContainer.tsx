@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { Div, Input, Button } from '@vkontakte/vkui';
+import React, { useState, useCallback, useEffect, useMemo, ChangeEvent } from 'react';
+import { Div, Input, Button, FormLayout, FormLayoutGroup } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import { useSelector, useActions } from 'src/hooks';
 import { Insets } from '@vkontakte/vk-bridge';
@@ -78,6 +78,13 @@ const BookmarksContainer: React.FC<{
   const isOverlay = useSelector((state) => state.app.overlay);
   const sortType = useSelector((state) => state.app.sortType);
 
+  const [folderNameError, setFolderNameError] = useState(false);
+
+  const changeFolderName = (e: ChangeEvent<HTMLInputElement>) => {
+    setCurrentEditableCollection({ ...currentEditableCollection!, title: e.target.value });
+    setFolderNameError(false);
+  };
+
   const [currentEditableCollection, setCurrentEditableCollection] = useState<Collection>();
 
   const [currentEditableBookmark, setCurrentEditableBookmark] = useState<Bookmark>();
@@ -86,7 +93,7 @@ const BookmarksContainer: React.FC<{
   const editCollectionSubmit = () => {
     const folderNameLength = currentEditableCollection?.title.trim().length!;
 
-    if (folderNameLength >= 1 && folderNameLength <= 50 && currentEditableCollection) {
+    if (folderNameLength >= 1 && folderNameLength <= 25 && currentEditableCollection) {
       editCollectionRemote({
         variables: {
           params: {
@@ -105,6 +112,8 @@ const BookmarksContainer: React.FC<{
         .catch((e) => openSnackbar(<ErrorRetrySnackbar text={e.message} />));
 
       closeEditCollectionModal();
+    } else {
+      setFolderNameError(true);
     }
   };
 
@@ -132,21 +141,27 @@ const BookmarksContainer: React.FC<{
 
   const editCollectionModal = (
     <Modal title="Название папки" show={editCollectionModalOpened} id="EDIT_FOLDER" onClose={closeEditCollectionModal}>
-      <Div style={{ paddingTop: 0 }}>
-        <Input
-          value={currentEditableCollection?.title}
-          onChange={(e) => setCurrentEditableCollection({ ...currentEditableCollection!, title: e.target.value })}
-          style={{ marginBottom: 12 }}
-          placeholder="Придумайте название"
-        />
+      <FormLayout>
+        <FormLayoutGroup
+          status={folderNameError ? 'error' : undefined}
+          bottom={folderNameError ? 'Длина поля должна быть не более 25 символов' : undefined}
+        >
+          <Input
+            status={folderNameError ? 'error' : undefined}
+            value={currentEditableCollection?.title}
+            onChange={changeFolderName}
+            placeholder="Придумайте название"
+          />
+        </FormLayoutGroup>
         <Button
+          style={{ marginTop: 12 }}
           onClick={editCollectionSubmit}
           disabled={currentEditableCollection?.title.trim().length! < 1 || loading}
           size="xl"
         >
           {loading ? 'Сохраняю...' : 'Сохранить'}
         </Button>
-      </Div>
+      </FormLayout>
     </Modal>
   );
 

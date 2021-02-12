@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PanelHeader, PanelHeaderBack, Div, Button } from '@vkontakte/vkui';
+import { PanelHeader, PanelHeaderBack, Div, Button, PanelHeaderContent } from '@vkontakte/vkui';
 import { State } from 'router5';
 import { useSelector } from 'src/hooks';
 import BookmarksHeader from '../atomic/BookmarksHeader/BookmarksHeader';
@@ -13,8 +13,10 @@ import Plug from '../atomic/Plug';
 
 const styles = makeStyles({
   panelHeader: {
+    '& .PanelHeaderContent--ios .PanelHeaderContent__in': {
+      alignItems: 'flex-start',
+    },
     '& .PanelHeader__content': {
-      fontSize: '20px',
       paddingRight: '91px !important',
       display: 'unset !important',
     },
@@ -70,7 +72,9 @@ const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack
     return (
       <>
         <PanelHeader className={classes.panelHeader} left={<PanelHeaderBack onClick={goBack} />}>
-          {collection.title}
+          <PanelHeaderContent aside={null} before={null} status="Папка">
+            {collection.title}
+          </PanelHeaderContent>
         </PanelHeader>
         <BookmarksHeader
           rootRoute={RootRoute.FOLDER}
@@ -96,7 +100,9 @@ const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack
     return (
       <>
         <PanelHeader className={classes.panelHeader} left={<PanelHeaderBack onClick={goBack} />}>
-          {collection.title}
+          <PanelHeaderContent aside={null} before={null} status="Папка">
+            {collection.title}
+          </PanelHeaderContent>
         </PanelHeader>
         <BookmarksHeader
           rootRoute={RootRoute.FOLDER}
