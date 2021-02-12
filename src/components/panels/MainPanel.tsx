@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { PanelHeader, Input, Button, Div } from '@vkontakte/vkui';
+import React, { ChangeEvent, useState } from 'react';
+import { PanelHeader, Button, FormLayout, FormLayoutGroup, Input } from '@vkontakte/vkui';
 import AddBtn from '../atomic/AddBtn';
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
@@ -35,6 +35,8 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
   const collections = useSelector((state) => state.collections.collections);
   const uncollected = useSelector((state) => state.collections.uncollected);
 
+  const [folderNameError, setFolderNameError] = useState(false);
+
   const [folderName, setFolderName] = useState('');
 
   const [search, setSearch] = useState('');
@@ -43,7 +45,7 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
 
   const addFolderSubmitHandler = async () => {
     const folderNameLength = folderName.trim().length;
-    if (folderNameLength >= 1 && folderNameLength <= 50) {
+    if (folderNameLength >= 1 && folderNameLength <= 25) {
       await createCollectionRemote({
         variables: {
           params: {
@@ -63,22 +65,40 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
         });
 
       closeAddFolderModal();
+    } else {
+      setFolderNameError(true);
     }
+  };
+
+  const changeFolderName = (e: ChangeEvent<HTMLInputElement>) => {
+    setFolderName(e.target.value);
+    setFolderNameError(false);
   };
 
   const addFolderModal = (
     <Modal title="Название папки" show={addFolderModalOpened} id="ADD_FOLDER" onClose={closeAddFolderModal}>
-      <Div style={{ paddingTop: 0 }}>
-        <Input
-          value={folderName}
-          onChange={(e) => setFolderName(e.target.value)}
-          style={{ marginBottom: 12 }}
-          placeholder="Придумайте название"
-        />
-        <Button onClick={addFolderSubmitHandler} disabled={folderName.trim().length < 1 || loading} size="xl">
+      <FormLayout>
+        <FormLayoutGroup
+          status={folderNameError ? 'error' : undefined}
+          bottom={folderNameError ? 'Длина поля должна быть не более 25 символов' : undefined}
+        >
+          <Input
+            status={folderNameError ? 'error' : undefined}
+            value={folderName}
+            onChange={changeFolderName}
+            placeholder="Придумайте название"
+          />
+        </FormLayoutGroup>
+
+        <Button
+          style={{ marginTop: 12 }}
+          onClick={addFolderSubmitHandler}
+          disabled={folderName.trim().length < 1 || loading}
+          size="xl"
+        >
           {loading ? 'Сохраняю...' : 'Сохранить'}
         </Button>
-      </Div>
+      </FormLayout>
     </Modal>
   );
 
