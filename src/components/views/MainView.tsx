@@ -59,7 +59,7 @@ const MainView: React.FC<MainViewProps> = ({ route: rootRoute, ...viewProps }) =
             const newHistory = history.filter((value) => value !== RootRoute.ONBOARDING);
             newHistory.push(RootRoute.MAIN);
             setHistory(newHistory);
-            router.navigate(RootRoute.MAIN);
+            router.navigate(RootRoute.MAIN, {}, { replace: true });
           }}
         />
       </Panel>
