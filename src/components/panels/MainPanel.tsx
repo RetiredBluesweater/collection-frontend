@@ -21,10 +21,12 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
   const [addFolderModalOpened, openAddFolderModal, closeAddFolderModal] = useQueryFlag(
     RootRoute.MAIN,
     'addFolderModal',
+    true,
   );
   const [addArticleModalOpened, openAddArticleModal, closeAddArticleModal] = useQueryFlag(
     RootRoute.MAIN,
     'addArticleModal',
+    true,
   );
   const [createCollectionRemote, { loading }] = useMutation<
     CreateCollectionMutation,

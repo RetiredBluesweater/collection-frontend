@@ -4,7 +4,7 @@ import useThrottle from './useThrottle';
 
 const FLAG_DISABLE_VALUE = '';
 
-const useQueryFlag = (routeNode: string, queryName: string) => {
+const useQueryFlag = (routeNode: string, queryName: string, replace?: boolean) => {
   const { route, router } = useRouteNode(routeNode);
 
   const flagValue = useThrottle(route.params[queryName] || FLAG_DISABLE_VALUE, 250);
@@ -12,7 +12,7 @@ const useQueryFlag = (routeNode: string, queryName: string) => {
   const setFlagValue = useCallback(
     (value: boolean) => {
       if (value) {
-        router.navigate(routeNode, { ...route.params, [queryName]: true });
+        router.navigate(routeNode, { ...route.params, [queryName]: true }, { replace });
       } else {
         window.history.back();
       }
