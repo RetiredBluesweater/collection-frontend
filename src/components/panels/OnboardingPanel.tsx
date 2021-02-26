@@ -214,22 +214,19 @@ const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) 
   const [slide, setSlide] = useState(0);
   const setCompleted = useStorageValue(StorageFieldEnum.OnboardingCompleted)[1];
 
-  const askForGroupMessages = () => {
+  const askForGroupMessages = (changeSlide?: boolean) => {
     vkBridge
       .send('VKWebAppAllowMessagesFromGroup', {
         group_id: config.groupId,
       })
-      .then((data) => {
-        setSlide((slide) => slide + 1);
-      })
-      .catch((e) => {
-        setSlide((slide) => slide + 1);
+      .finally(() => {
+        changeSlide && setSlide((slide) => slide + 1);
       });
   };
 
   const onNextClick = useCallback(() => {
     if (slide === 1) {
-      askForGroupMessages();
+      askForGroupMessages(true);
       return;
     }
 
@@ -241,9 +238,17 @@ const OnboardingPanel: React.FC<{ onStartApp(): void }> = memo(({ onStartApp }) 
     setCompleted(true);
   }, [setCompleted]);
 
+  const changeSlide = (index: number) => {
+    setSlide(index);
+
+    if (index === 1) {
+      askForGroupMessages();
+    }
+  };
+
   return (
     <div className={mc.root}>
-      <Views className={mc.views} onChangeIndex={setSlide} index={slide}>
+      <Views className={mc.views} onChangeIndex={changeSlide} index={slide}>
         {onboardingSlides.map((s, idx, arr) => {
           const { title, buttonText, description, image } = s;
 
