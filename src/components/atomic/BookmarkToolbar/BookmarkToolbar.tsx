@@ -25,7 +25,9 @@ const styles = makeStyles(
       justifyContent: 'space-between',
       lineHeight: '22px',
       fontSize: '17px',
-      borderBottom: '0.5px solid rgba(60, 60, 67, 0.29)',
+      '&:not(:last-child)': {
+        borderBottom: '0.5px solid rgba(60, 60, 67, 0.29)',
+      },
       '&:active': {
         background: '#a5a5a58f',
       },

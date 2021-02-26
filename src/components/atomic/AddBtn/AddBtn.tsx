@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FixedLayout } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -6,6 +6,8 @@ import { ReactComponent as PlusBtnSVG } from '../../../assets/plus_btn.svg';
 import Overlay from '../Overlay';
 import OutsideClickHandler from 'react-outside-click-handler';
 import AddBtnToolBar from '../AddBtnToolBar';
+import useQueryFlag from 'src/hooks/useQueryFlag';
+import { RootRoute } from 'src/router';
 
 const styles = makeStyles({
   fixedLayout: {
@@ -44,34 +46,31 @@ const AddBtn: React.FC<{
   openAddArticleModalHandler?: () => void;
 }> = ({ openAddFolderModalHandler, openAddArticleModalHandler, modalOpened }) => {
   const classes = styles();
-  const [openMode, setOpenMode] = useState(false);
+  const [choiseModeOpened, openChoiseMode, closeChoiseMode] = useQueryFlag(RootRoute.MAIN, 'choseMode');
 
   const onBtnClickHandler = () => {
     if (!openAddFolderModalHandler && openAddArticleModalHandler) {
       openAddArticleModalHandler();
       return;
     }
-    setOpenMode(!openMode);
-  };
 
-  useEffect(() => {
-    if (modalOpened) {
-      setOpenMode(false);
-    }
-  }, [modalOpened]);
+    choiseModeOpened ? closeChoiseMode() : openChoiseMode();
+  };
 
   return (
     <>
-      <Overlay enable={openMode} />
+      <Overlay enable={choiseModeOpened} />
       <FixedLayout className={classes.fixedLayout} vertical="bottom">
-        <OutsideClickHandler onOutsideClick={() => setOpenMode(false)}>
-          <PlusBtnSVG onClick={onBtnClickHandler} className={clsx(classes.btn, openMode && classes.btn__openMode)} />
+        <OutsideClickHandler onOutsideClick={() => !modalOpened && choiseModeOpened && closeChoiseMode()}>
+          <PlusBtnSVG
+            onClick={onBtnClickHandler}
+            className={clsx(classes.btn, choiseModeOpened && classes.btn__openMode)}
+          />
           {openAddFolderModalHandler && (
             <AddBtnToolBar
               openAddArticleModalHandler={
                 openAddArticleModalHandler
                   ? () => {
-                      setOpenMode(false);
                       openAddArticleModalHandler();
                     }
                   : undefined
@@ -79,12 +78,11 @@ const AddBtn: React.FC<{
               openAddFolderModalHandler={
                 openAddFolderModalHandler
                   ? () => {
-                      setOpenMode(false);
                       openAddFolderModalHandler();
                     }
                   : undefined
               }
-              enable={openMode}
+              enable={choiseModeOpened}
             />
           )}
         </OutsideClickHandler>

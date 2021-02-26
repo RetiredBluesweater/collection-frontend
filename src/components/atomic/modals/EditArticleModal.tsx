@@ -165,7 +165,11 @@ const EditArticleModal: React.FC<EditArticleModalProps> = ({ opened, onClose, bo
         title="Редактировать статью"
         id="EDIT_ARTICLE"
         show={opened || foldersModalOpened}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+          setArticle({ ...article, title: bookmark.title, link: bookmark.link, collectionId: bookmark.collectionId });
+          setValidationFields(validationArticleModalInitial);
+        }}
       >
         <FormLayout>
           <FormLayoutGroup

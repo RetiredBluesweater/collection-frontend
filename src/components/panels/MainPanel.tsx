@@ -18,14 +18,15 @@ interface MainPanelProps {
   onFolderOpen(folderId: string): void;
 }
 const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
-  const [addFolderModalOpened, openAddFolderModal, closeAddFolderModal] = useQueryFlag(
+  const [addFolderModalOpened, openAddFolderModal, closeAddFolderModal, replaceAddFolderModal] = useQueryFlag(
     RootRoute.MAIN,
     'addFolderModal',
   );
-  const [addArticleModalOpened, openAddArticleModal, closeAddArticleModal] = useQueryFlag(
+  const [addArticleModalOpened, openAddArticleModal, closeAddArticleModal, replaceAddArticleModal] = useQueryFlag(
     RootRoute.MAIN,
     'addArticleModal',
   );
+
   const [createCollectionRemote, { loading }] = useMutation<
     CreateCollectionMutation,
     CreateCollectionMutation.Arguments
@@ -105,10 +106,16 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
   const onSearchChange = (q: string) => {
     setSearch(q);
   };
+
   return (
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
-      <BookmarksHeader rootRoute={RootRoute.MAIN} resultsLength={searchResultsLength} onSearchChange={onSearchChange} />
+      <BookmarksHeader
+        sortEnable={collections.length > 0 || uncollected.length > 0}
+        rootRoute={RootRoute.MAIN}
+        resultsLength={searchResultsLength}
+        onSearchChange={onSearchChange}
+      />
       {collections.length < 1 && uncollected.length < 1 ? (
         <Plug
           text={
@@ -135,9 +142,9 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
         modalOpened={addFolderModalOpened || addArticleModalOpened}
         openAddFolderModalHandler={() => {
           setFolderName('');
-          openAddFolderModal();
+          replaceAddFolderModal();
         }}
-        openAddArticleModalHandler={openAddArticleModal}
+        openAddArticleModalHandler={replaceAddArticleModal}
       />
       {addFolderModal}
       <AddArticleModal collections={collections} opened={addArticleModalOpened} onClose={closeAddArticleModal} />

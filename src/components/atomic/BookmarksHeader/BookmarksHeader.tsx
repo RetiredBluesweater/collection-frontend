@@ -55,12 +55,13 @@ export enum SORT_TYPE {
   DATE_OLD,
 }
 interface BookmarksHeaderProps {
+  sortEnable?: boolean;
   sortType?: SORT_TYPE;
   onSearchChange(q: string): void;
   resultsLength: number;
   rootRoute: RootRoute;
 }
-const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ onSearchChange, resultsLength, rootRoute }) => {
+const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchChange, resultsLength, rootRoute }) => {
   const classes = styles();
 
   const [actionSheetOpened, openActionSheet, closeActionSheet] = useQueryFlag(rootRoute, 'actionSheet');
@@ -102,10 +103,12 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ onSearchChange, resul
                   'результатов',
                 ])}`}
           </div>
-          <div onClick={openActionSheet} className={classes.sortContainer}>
-            <div className={classes.sortTitle}>{getSortName(sortType)}</div>
-            <Icon16Dropdown />
-          </div>
+          {sortEnable && (
+            <div onClick={openActionSheet} className={classes.sortContainer}>
+              <div className={classes.sortTitle}>{getSortName(sortType)}</div>
+              <Icon16Dropdown />
+            </div>
+          )}
         </Div>
       </FixedLayout>
       <SortPanel onClose={closeActionSheet} open={actionSheetOpened} />

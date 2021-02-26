@@ -41,7 +41,7 @@ export const createRouter = (defaultRoute: string) => {
   const route = router.getState();
 
   if (route) {
-    router.navigate(defaultRoute, { ...route.params, fix: 'safari' }, { force: true });
+    router.navigate(defaultRoute, { ...route.params, fix: 'safari' }, { replace: true, force: true });
   }
 
   return router;
