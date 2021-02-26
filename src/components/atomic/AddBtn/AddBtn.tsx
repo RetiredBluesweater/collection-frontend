@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FixedLayout } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -61,7 +61,7 @@ const AddBtn: React.FC<{
     <>
       <Overlay enable={choiseModeOpened} />
       <FixedLayout className={classes.fixedLayout} vertical="bottom">
-        <OutsideClickHandler onOutsideClick={() => choiseModeOpened && closeChoiseMode()}>
+        <OutsideClickHandler onOutsideClick={() => !modalOpened && choiseModeOpened && closeChoiseMode()}>
           <PlusBtnSVG
             onClick={onBtnClickHandler}
             className={clsx(classes.btn, choiseModeOpened && classes.btn__openMode)}

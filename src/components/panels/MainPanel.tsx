@@ -18,16 +18,15 @@ interface MainPanelProps {
   onFolderOpen(folderId: string): void;
 }
 const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
-  const [addFolderModalOpened, openAddFolderModal, closeAddFolderModal] = useQueryFlag(
+  const [addFolderModalOpened, openAddFolderModal, closeAddFolderModal, replaceAddFolderModal] = useQueryFlag(
     RootRoute.MAIN,
     'addFolderModal',
-    true,
   );
-  const [addArticleModalOpened, openAddArticleModal, closeAddArticleModal] = useQueryFlag(
+  const [addArticleModalOpened, openAddArticleModal, closeAddArticleModal, replaceAddArticleModal] = useQueryFlag(
     RootRoute.MAIN,
     'addArticleModal',
-    true,
   );
+
   const [createCollectionRemote, { loading }] = useMutation<
     CreateCollectionMutation,
     CreateCollectionMutation.Arguments
@@ -137,9 +136,9 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
         modalOpened={addFolderModalOpened || addArticleModalOpened}
         openAddFolderModalHandler={() => {
           setFolderName('');
-          openAddFolderModal();
+          replaceAddFolderModal();
         }}
-        openAddArticleModalHandler={openAddArticleModal}
+        openAddArticleModalHandler={replaceAddArticleModal}
       />
       {addFolderModal}
       <AddArticleModal collections={collections} opened={addArticleModalOpened} onClose={closeAddArticleModal} />
