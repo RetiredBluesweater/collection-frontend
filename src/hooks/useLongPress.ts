@@ -25,6 +25,8 @@ export const useLongPress = (
         startY: event.touches && event.touches[0].clientY,
       };
 
+      if (event.touches.length > 1) return;
+
       event.target.addEventListener('touchmove', getCoordinates);
 
       if (shouldPreventDefault && event.target) {
