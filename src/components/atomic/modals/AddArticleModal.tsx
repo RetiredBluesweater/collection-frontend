@@ -108,6 +108,11 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
 
   const clearHandler = () => {
     setArticle({ ...article, title: '', collectionId: '', link: '' });
+    setValidationFields({
+      ...validationFields,
+      link: { ...validationFields.link, status: 'default' },
+      title: { ...validationFields.title, status: 'default' },
+    });
   };
 
   const isClearDisable = () => {
@@ -170,7 +175,10 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
             <Input
               status={validationFields.link.status}
               value={article.link}
-              onChange={(e) => setArticle({ ...article, link: e.target.value })}
+              onChange={(e) => {
+                setArticle({ ...article, link: e.target.value });
+                setValidationFields({ ...validationFields, link: { ...validationFields.link, status: 'default' } });
+              }}
               placeholder="Вставьте ссылку"
             />
           </FormLayoutGroup>
@@ -192,7 +200,10 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
             <Input
               status={validationFields.title.status}
               value={article.title}
-              onChange={(e) => setArticle({ ...article, title: e.target.value })}
+              onChange={(e) => {
+                setArticle({ ...article, title: e.target.value });
+                setValidationFields({ ...validationFields, title: { ...validationFields.title, status: 'default' } });
+              }}
               placeholder="Укажите название"
             />
           </FormLayoutGroup>
