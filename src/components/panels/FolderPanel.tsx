@@ -105,6 +105,7 @@ const FolderPanel: React.FC<{ route: State; goBack(): void }> = ({ route, goBack
           </PanelHeaderContent>
         </PanelHeader>
         <BookmarksHeader
+          sortEnable
           rootRoute={RootRoute.FOLDER}
           resultsLength={searchResultsLength}
           onSearchChange={onSearchChange}

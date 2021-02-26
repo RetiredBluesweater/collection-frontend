@@ -106,10 +106,16 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
   const onSearchChange = (q: string) => {
     setSearch(q);
   };
+
   return (
     <>
       <PanelHeader separator={false}>Мои статьи</PanelHeader>
-      <BookmarksHeader rootRoute={RootRoute.MAIN} resultsLength={searchResultsLength} onSearchChange={onSearchChange} />
+      <BookmarksHeader
+        sortEnable={collections.length > 0 || uncollected.length > 0}
+        rootRoute={RootRoute.MAIN}
+        resultsLength={searchResultsLength}
+        onSearchChange={onSearchChange}
+      />
       {collections.length < 1 && uncollected.length < 1 ? (
         <Plug
           text={
