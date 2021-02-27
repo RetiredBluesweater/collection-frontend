@@ -17,6 +17,7 @@ import { EditCollectionMutation, editCollectionMutation } from 'src/types/gql/ed
 import ErrorRetrySnackbar from '../snackbars/ErrorRetrySnackbar';
 import TransferModal from '../modals/TransferModal';
 import { sortCollections, sortBookmarks } from './utils';
+import { appActions } from 'src/redux/reducers/app';
 
 const TOP_SAFE_AREA = 88;
 const BOTTOM_SAFE_AREA = 105;
@@ -132,7 +133,10 @@ const BookmarksContainer: React.FC<{
     openTransferModal();
   };
 
+  const setOverylayAction = useActions(appActions.setOverlay);
+
   useEffect(() => {
+    setOverylayAction(false);
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
     const vh = window.innerHeight * 0.01;
     // Then we set the value in the --vh custom property to the root of the document
