@@ -103,7 +103,6 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
 
     onClose();
     setValidationFields(validationArticleModalInitial);
-    clearHandler();
   };
 
   const clearHandler = () => {
