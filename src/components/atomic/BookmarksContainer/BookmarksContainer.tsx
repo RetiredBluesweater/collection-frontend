@@ -253,7 +253,7 @@ const BookmarksContainer: React.FC<{
     if (!q) {
       setPlug(false);
     }
-  }, [q]);
+  }, [q, collections, uncollected]);
 
   return (
     <>
