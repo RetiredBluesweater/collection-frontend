@@ -143,6 +143,12 @@ const BookmarksContainer: React.FC<{
     document.documentElement.style.setProperty('--vh', `${vh}px`);
   }, []);
 
+  useEffect(() => {
+    if (!currentEditableCollection?.id) {
+      closeEditCollectionModal();
+    }
+  }, [currentEditableCollection]);
+
   const editCollectionModal = (
     <Modal title="Название папки" show={editCollectionModalOpened} id="EDIT_FOLDER" onClose={closeEditCollectionModal}>
       <FormLayout>
