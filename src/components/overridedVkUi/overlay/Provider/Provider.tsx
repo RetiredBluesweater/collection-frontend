@@ -95,7 +95,7 @@ const Provider: React.FC = memo(({ children }) => {
       previousBodyOverflow.current = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = previousBodyOverflow.current;
+      document.body.style.overflow = '';
       document.body.style.paddingRight = previousPaddingRight.current;
     }
   }, [overlayOpened]);
