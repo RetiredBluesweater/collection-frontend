@@ -144,7 +144,7 @@ const BookmarksContainer: React.FC<{
   }, []);
 
   useEffect(() => {
-    if (!currentEditableCollection?.id) {
+    if (editCollectionModalOpened && !currentEditableCollection?.id) {
       closeEditCollectionModal();
     }
   }, [currentEditableCollection]);
