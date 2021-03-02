@@ -104,6 +104,8 @@ const Overlay: React.FC<{ enable: boolean; blur?: boolean }> = ({ enable, blur =
       }
     };
 
+    document.body.style.overflow = enable ? 'none' : '';
+
     vkBridge.subscribe(listener);
     return () => vkBridge.unsubscribe(listener);
   }, [setStatusBarStyle, currentStyle, enable]);

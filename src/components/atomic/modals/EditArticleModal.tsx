@@ -108,7 +108,6 @@ const EditArticleModal: React.FC<EditArticleModalProps> = ({ opened, onClose, bo
 
     onClose();
     setValidationFields(validationArticleModalInitial);
-    clearHandler();
   };
 
   const clearHandler = () => {
