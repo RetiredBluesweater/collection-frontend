@@ -46,7 +46,7 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
 
   const addFolderSubmitHandler = async () => {
     const folderNameLength = folderName.trim().length;
-    if (folderNameLength >= 1 && folderNameLength <= 25) {
+    if (folderNameLength >= 1 && folderNameLength <= 120) {
       await createCollectionRemote({
         variables: {
           params: {
@@ -81,7 +81,7 @@ const MainPanel: React.FC<MainPanelProps> = ({ onFolderOpen }) => {
       <FormLayout>
         <FormLayoutGroup
           status={folderNameError ? 'error' : undefined}
-          bottom={folderNameError ? 'Длина поля должна быть не более 25 символов' : undefined}
+          bottom={folderNameError ? 'Длина поля должна быть не более 120 символов' : undefined}
         >
           <Input
             status={folderNameError ? 'error' : undefined}

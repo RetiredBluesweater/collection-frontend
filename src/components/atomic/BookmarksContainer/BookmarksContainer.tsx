@@ -94,7 +94,7 @@ const BookmarksContainer: React.FC<{
   const editCollectionSubmit = () => {
     const folderNameLength = currentEditableCollection?.title.trim().length!;
 
-    if (folderNameLength >= 1 && folderNameLength <= 25 && currentEditableCollection) {
+    if (folderNameLength >= 1 && folderNameLength <= 120 && currentEditableCollection) {
       editCollectionRemote({
         variables: {
           params: {
@@ -154,7 +154,7 @@ const BookmarksContainer: React.FC<{
       <FormLayout>
         <FormLayoutGroup
           status={folderNameError ? 'error' : undefined}
-          bottom={folderNameError ? 'Длина поля должна быть не более 25 символов' : undefined}
+          bottom={folderNameError ? 'Длина поля должна быть не более 120 символов' : undefined}
         >
           <Input
             status={folderNameError ? 'error' : undefined}
