@@ -28,7 +28,6 @@ const styles = makeStyles(
       paddingTop: (props: { insets: Insets }) => `${TOP_SAFE_AREA + props.insets.top}px`,
       paddingBottom: (props: { insets: Insets }) =>
         `${BOTTOM_SAFE_AREA + (props.insets.bottom >= 150 ? 0 : props.insets.bottom)}px`,
-      overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
     },
