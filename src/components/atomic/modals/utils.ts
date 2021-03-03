@@ -7,8 +7,8 @@ export const validateArticleModal = (form: AddArticleModalStateProps) => {
   const createErrorStatus = (text: string) => ({ status: 'error', text });
 
   const linkReg = /^((ftp|http|https):\/\/)?(www\.)?([A-Za-zА-Яа-я0-9]{1}[A-Za-zА-Яа-я0-9\-]*\.?)*\.{1}[A-Za-zА-Яа-я0-9-]{2,8}(\/([\w#!:.?+=&%@!\-\/])*)?/u;
-  if (form.title.trim().length > 25) {
-    newValidatedObject['title'] = createErrorStatus('Длина поля должна быть не более 25 символов');
+  if (form.title.trim().length > 120) {
+    newValidatedObject['title'] = createErrorStatus('Длина поля должна быть не более 120 символов');
   } else if (form.title.trim().length < 1) {
     newValidatedObject['title'] = createErrorStatus('Поле не заполнено');
   } else {
