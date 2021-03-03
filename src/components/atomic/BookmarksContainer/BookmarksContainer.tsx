@@ -31,8 +31,6 @@ const styles = makeStyles(
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      minHeight: (props: { insets: Insets }) =>
-        `calc(var(--vh, 1vh) * 100 - ${250 + props.insets.bottom + props.insets.top}px)`,
     },
   },
   { classNamePrefix: 'BookmarksContainer' },
