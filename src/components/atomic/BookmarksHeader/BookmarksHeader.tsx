@@ -73,6 +73,7 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchC
   const throttledOnChange = useCallback(
     throttle(500, (q: string) => {
       onSearchChange(q);
+      document.documentElement.scrollTo(0, 0);
     }),
     [],
   );

@@ -120,7 +120,7 @@ const TransferModal: React.FC<TransferModalProps> = ({ opened, onClose, bookmark
           <FixedLayout className={classes.fixedLayout} vertical="bottom">
             <Div className={classes.button}>
               <Button
-                disabled={prevCollectionId === newCollectionId || loading}
+                disabled={prevCollectionId === (newCollectionId || undefined) || loading}
                 onClick={onTransferHandler}
                 size={'xl'}
               >
