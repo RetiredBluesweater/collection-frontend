@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, useSnackbar } from '@overrided-vkui';
 import {
   PanelHeaderButton,
@@ -104,6 +104,12 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({ opened, onClose, coll
     onClose();
     setValidationFields(validationArticleModalInitial);
   };
+
+  useEffect(() => {
+    if (opened) {
+      clearHandler();
+    }
+  }, [opened]);
 
   const clearHandler = () => {
     setArticle({ ...article, title: '', collectionId: '', link: '' });
