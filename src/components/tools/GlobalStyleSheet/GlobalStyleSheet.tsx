@@ -41,7 +41,9 @@ const useStyles = makeStyles((theme: Theme) => ({
       '-webkit-text-size-adjust': '100%',
       '-webkit-overflow-scrolling': 'touch',
     },
-
+    '.Panel__in': {
+      overflowX: 'hidden',
+    },
     'body, #root': {
       margin: 0,
       padding: 0,
