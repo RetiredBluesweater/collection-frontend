@@ -25,7 +25,8 @@ const BOTTOM_SAFE_AREA = 105;
 const styles = makeStyles(
   {
     root: {
-      paddingTop: (props: { insets: Insets }) => `${TOP_SAFE_AREA + props.insets.top}px`,
+      paddingTop: (props: { insets: Insets; headerHeight?: number }) =>
+        `${(props.headerHeight ? props.headerHeight : TOP_SAFE_AREA) + props.insets.top}px`,
       paddingBottom: (props: { insets: Insets }) =>
         `${BOTTOM_SAFE_AREA + (props.insets.bottom >= 150 ? 0 : props.insets.bottom)}px`,
       display: 'flex',
@@ -66,13 +67,14 @@ const BookmarksContainer: React.FC<{
     rootRoute,
     'editArticleModal',
   );
+  const [headerHeight, setHeaderHeight] = useState<number | undefined>(undefined);
 
   const [transferModalOpened, openTransferModal, closeTransferModal] = useQueryFlag(rootRoute, 'transferModal');
 
   const editCollectionAction = useActions(collectionsActions.editCollection);
 
   const insets = useSelector((state) => state.device.currentInsets);
-  const classes = styles({ insets });
+  const classes = styles({ insets, headerHeight });
   const isOverlay = useSelector((state) => state.app.overlay);
   const sortType = useSelector((state) => state.app.sortType);
 
@@ -138,6 +140,8 @@ const BookmarksContainer: React.FC<{
     const vh = window.innerHeight * 0.01;
     // Then we set the value in the --vh custom property to the root of the document
     document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+    setHeaderHeight(document.querySelector('#bookmarksHeaderRef')?.getBoundingClientRect().height);
   }, []);
 
   useEffect(() => {

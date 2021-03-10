@@ -109,7 +109,7 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchC
 
   return (
     <>
-      <FixedLayout vertical="top">
+      <FixedLayout vertical="top" id="bookmarksHeaderRef">
         <Search onChange={onChange} className={classes.search} getRef={inputRef} />
         <Div className={classes.sortBlock}>
           <div style={{ opacity: resultsLength > 0 ? 1 : 0 }} className={classes.resultsTitle}>
