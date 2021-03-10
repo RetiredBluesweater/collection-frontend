@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { FixedLayout, Search, Div } from '@vkontakte/vkui';
 import { makeStyles } from '@material-ui/styles';
 import Icon16Dropdown from '@vkontakte/icons/dist/16/dropdown';
@@ -63,6 +63,7 @@ interface BookmarksHeaderProps {
 }
 const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchChange, resultsLength, rootRoute }) => {
   const classes = styles();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [actionSheetOpened, openActionSheet, closeActionSheet] = useQueryFlag(rootRoute, 'actionSheet');
 
@@ -82,6 +83,20 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchC
     throttledOnChange(e.target.value);
   };
 
+  const handleBlur = () => {
+    if (inputRef.current) {
+      inputRef.current.blur();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleBlur);
+
+    return () => {
+      window.removeEventListener('scroll', handleBlur);
+    };
+  }, [inputRef]);
+
   /*   useEffect(() => {
     if (actionSheetOpened) {
       setActionSheet({ status: actionSheetOpened, onClose: closeActionSheet });
@@ -92,8 +107,8 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchC
 
   return (
     <>
-      <FixedLayout vertical="top">
-        <Search onChange={onChange} className={classes.search} />
+      <FixedLayout vertical="top" id="bookmarksHeaderRef">
+        <Search onChange={onChange} className={classes.search} getRef={inputRef} />
         <Div className={classes.sortBlock}>
           <div style={{ opacity: resultsLength > 0 ? 1 : 0 }} className={classes.resultsTitle}>
             {resultsLength > 0
