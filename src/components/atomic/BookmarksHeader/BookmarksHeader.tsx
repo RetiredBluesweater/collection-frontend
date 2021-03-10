@@ -83,21 +83,19 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchC
     throttledOnChange(e.target.value);
   };
 
-  const handleBlur = (event: TouchEvent) => {
-    const target = event.target as HTMLElement;
-
-    if (inputRef.current && !inputRef.current.contains(target)) {
+  const handleBlur = () => {
+    if (inputRef.current) {
       inputRef.current.blur();
     }
   };
 
   useEffect(() => {
-    document.body.addEventListener('touchstart', handleBlur);
+    window.addEventListener('scroll', handleBlur);
 
     return () => {
-      document.body.removeEventListener('touchstart', handleBlur);
+      window.removeEventListener('scroll', handleBlur);
     };
-  }, [inputRef]);
+  }, []);
 
   /*   useEffect(() => {
     if (actionSheetOpened) {
