@@ -95,7 +95,7 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchC
     return () => {
       window.removeEventListener('scroll', handleBlur);
     };
-  }, [inputRef]);
+  }, []);
 
   /*   useEffect(() => {
     if (actionSheetOpened) {
