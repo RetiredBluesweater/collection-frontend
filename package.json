@@ -7,7 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "@apollo/react-hooks": "^3.1.4",
-    "@babel/polyfill": "^7.12.1",
     "@material-ui/styles": "^4.9.0",
     "@types/body-scroll-lock": "^2.6.1",
     "@types/classnames": "^2.2.9",
@@ -36,6 +35,7 @@
     "chalk": "^4.0.0",
     "classnames": "^2.2.6",
     "collection-bridge": "git+ssh://git@github.com/RetiredBluesweater/collection-bridge.git",
+    "core-js": "^3.9.1",
     "customize-cra": "^0.9.1",
     "dotenv": "^8.2.0",
     "eruda": "^2.2.2",
