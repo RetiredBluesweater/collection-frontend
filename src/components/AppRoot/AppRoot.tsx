@@ -201,7 +201,7 @@ export class AppRoot extends PureComponent<Props, AppRootState> {
 
     try {
       // Performing all async operations and getting data to launch application
-      const [storage, vkUser, register] = await Promise.all([
+      const [storage, vkUser] = await Promise.all([
         getStorageKeys<StorageValuesMap>(...Object.values(StorageFieldEnum)),
         vkBridge.send('VKWebAppGetUserInfo'),
         this.apolloClient.mutate<RegisterMutation, RegisterMutation.Arguments>({ mutation: registerMutation }),

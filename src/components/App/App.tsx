@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 
-import { useDoubleTapHandler, useSelector } from '../../hooks';
+import { useDoubleTapHandler } from '../../hooks';
 import Root from '@vkontakte/vkui/dist/components/Root/Root';
 
 import { useRouteNode } from 'react-router5';
 import { RootRoute } from '../../router';
 
 import MainView from '../views/MainView';
-import SortPanel from '../atomic/actionSheets/SortPanel';
 
 const styles = makeStyles(() => ({
   root: {
@@ -25,7 +24,6 @@ const styles = makeStyles(() => ({
 const App = () => {
   const classes = styles();
   document.body.className = classes.root;
-  const actionSheet = useSelector((state) => state.app.actionSheet);
 
   const onTouchStart = useDoubleTapHandler();
 

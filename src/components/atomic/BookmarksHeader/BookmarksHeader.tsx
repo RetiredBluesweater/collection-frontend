@@ -6,12 +6,13 @@ import { getSortName } from './utils';
 import { throttle } from 'throttle-debounce';
 import { declOfNum } from 'src/utils/math';
 import { usePrevious } from 'src/hooks/usePrevious';
-import { useSelector } from 'src/hooks';
+import { useActions, useSelector } from 'src/hooks';
 
 import useQueryFlag from 'src/hooks/useQueryFlag';
 import { RootRoute } from 'src/router';
 
 import SortPanel from '../actionSheets/SortPanel';
+import { appActions } from 'src/redux/reducers/app';
 
 const styles = makeStyles(
   {
@@ -68,7 +69,7 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchC
   const [actionSheetOpened, openActionSheet, closeActionSheet] = useQueryFlag(rootRoute, 'actionSheet');
 
   const sortType = useSelector((state) => state.app.sortType);
-  /*   const setActionSheet = useActions(appActions.setActionSheet); */
+  const setActionSheet = useActions(appActions.setActionSheet);
 
   const prevResultsLength = usePrevious(resultsLength);
   const throttledOnChange = useCallback(
@@ -97,13 +98,13 @@ const BookmarksHeader: React.FC<BookmarksHeaderProps> = ({ sortEnable, onSearchC
     };
   }, []);
 
-  /*   useEffect(() => {
+  useEffect(() => {
     if (actionSheetOpened) {
       setActionSheet({ status: actionSheetOpened, onClose: closeActionSheet });
     } else {
       setActionSheet({ status: actionSheetOpened, onClose: closeActionSheet });
     }
-  }, [actionSheetOpened, openActionSheet, closeActionSheet, rootRoute, setActionSheet]); */
+  }, [actionSheetOpened, closeActionSheet, setActionSheet]);
 
   return (
     <>

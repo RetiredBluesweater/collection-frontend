@@ -28,6 +28,7 @@ const initialState: AppReducerState = {
   overlay: false,
   toolbar: { status: false, ref: null },
   sortType: SORT_TYPE.DATE_NEW,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   actionSheet: { status: false, onClose: () => {} },
 };
 
