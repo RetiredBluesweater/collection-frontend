@@ -29,7 +29,7 @@ interface MainViewProps extends Omit<ViewProps, 'activePanel'> {
 const MainView: React.FC<MainViewProps> = ({ route: rootRoute, ...viewProps }) => {
   const insets = useSelector((state) => state.device.currentInsets);
   const { route, router } = useRouteNode(RootRoute.MAIN);
-  const actionSheet = useSelector((state) => state.app.actionSheet);
+  const { actionSheet, overlay } = useSelector((state) => state.app);
 
   const activePanel = route.name;
 
@@ -57,7 +57,7 @@ const MainView: React.FC<MainViewProps> = ({ route: rootRoute, ...viewProps }) =
       {...viewProps}
       activePanel={activePanel}
       onSwipeBack={goHistoryBack}
-      history={actionSheet.status ? [] : history}
+      history={actionSheet.status || overlay ? [] : history}
     >
       <Panel className={classes.root} id={RootRoute.ONBOARDING}>
         <OnboardingPanel
