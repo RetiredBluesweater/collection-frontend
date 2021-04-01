@@ -191,6 +191,10 @@ export class AppRoot extends PureComponent<Props, AppRootState> {
         this.store.dispatch(deviceActions.setCurrentInsets(config.insets));
       }
     }
+
+    if (event.detail.type === 'VKWebAppViewRestore') {
+      this.init();
+    }
   };
 
   /**
